@@ -1,0 +1,28 @@
+html {
+	font-size: 16px;
+	font-weight: 300;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: lighter;
+}
+
+body {
+  background: #222;
+  color: rgb(255, 146, 44);
+}
+
+.above-fold {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	max-width: 800px;
+	min-height: 85vh;
+	margin: auto;
+}
+.above-fold h3 {
+	text-align: center;
+}
+canvas {
+	overflow: hidden;
+}
