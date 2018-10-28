@@ -1,5 +1,6 @@
 # personal-site-clj
 
+Chestnut template info below. :)
 
 ## Development
 
