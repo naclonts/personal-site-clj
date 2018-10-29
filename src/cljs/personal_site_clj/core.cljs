@@ -8,6 +8,7 @@
 
 ; Binary Tree goodness
 ; thanks to https://eddmann.com/posts/binary-search-trees-in-clojure/
+; and https://eddmann.com/posts/avl-trees-in-clojure/
 (defrecord Node [el left right])
 
 (defn tree-min [{:keys [el left]}]
@@ -62,6 +63,41 @@
 (defn to-list [{:keys [el left right] :as tree}]
 	(when tree
 		`(~@(to-list left) ~el ~@(to-list right))))
+
+(defn factor [{:keys [left right]}]
+	(- (tree-height left) (tree-height right)))
+
+(defn rotate-left [{:keys [el left right] :as tree}]
+	(if right
+		(->Node (:el right) (->Node el left (:left right)) (:right right))
+		tree))
+
+(defn rotate-right [{:keys [el left right] :as tree}]
+	(if left
+		(-> Node (:el left) (:left left) (->Node el (:right left) right))
+		tree))
+
+(defn is-left-case? [tree]
+	(< (factor tree) -1))
+(defn is-left-right-case? [tree]
+	(and (is-left-case? tree) (> (factor (:right tree)) 0)))
+(defn is-right-case? [tree]
+	(> (factor tree) 1))
+(defn is-right-left-case? [tree]
+	(and (is-right-case? tree) (< (factor (:left tree)) 0)))
+
+(defn tree-balance [{:keys [el left right] :as tree}]
+	(cond
+		(is-right-left-case? tree) (rotate-right (->Node el (rotate-left left) right))
+		(is-left-right-case? tree) (rotate-left (->Node el left (rotate-right right)))
+		(is-right-case? tree) (rotate-right tree)
+		(is-left-case? tree) (rotate-left tree)
+		:else tree))
+
+(def avl-insert (comp tree-balance tree-insert))
+(def avl-remove (comp tree-balance tree-remove))
+(def seq->avl (partial reduce avl-insert nil))
+
 
 ; Event handlers
 (defn trigger-when-clicked [class-name f]
