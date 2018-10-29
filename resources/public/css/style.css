@@ -27,9 +27,6 @@ canvas {
 	overflow: hidden;
 }
 
-.hidden {
-	display: none;
-}
 
 
 /*************************/
@@ -39,7 +36,7 @@ canvas {
     position: fixed;
     height: 100%;
     width: 100%;
-    background-color: hsla(0, 0%, 90%, 0.8);
+    background-color: hsla(0, 0%, 27%, 0.8);
     z-index: 10;
     padding: 10% 0;
     transition: transform .45s cubic-bezier(.45,0,0,1);
@@ -92,7 +89,7 @@ canvas {
 .menu a:before {
     top: 0;
     transform: translateX(-100%);
-    background-color: hsla(107, 34%, 49%, 0.9);
+    background-color: hsla(177, 34%, 49%, 0.9);
 }
 
 .menu a:after {
@@ -119,19 +116,18 @@ canvas {
 	z-index: 100;
 	position: fixed;
 	right: 0;
-	color: #444;
+	color: #fff;
 	border-radius: 50%;
-	background-color: rgba(255, 255, 255, 0.8);
 	height: 70px;
 	width: 70px;
 }
 
 .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
-	background-color: #777;
+	background-color: rgb(218, 169, 124);
 }
 
 .hamburger:focus {
-	outline: 1px solid rgba(99, 99, 99, 0.33);
+	outline: 1px solid rgba(240, 240, 240, 0.33);
 }
 
 /* Hover animations */
