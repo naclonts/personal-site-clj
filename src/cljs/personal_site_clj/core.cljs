@@ -1,5 +1,6 @@
 (ns personal-site-clj.core
-	(:require [quil.core :as q :include-macros true]))
+	(:require [quil.core :as q :include-macros true]
+						[quil.middleware :as m]))
 
 (enable-console-print!)
 (extend-type js/HTMLCollection
@@ -119,31 +120,38 @@
 (trigger-when-clicked "menu-link" close-menu)
 
 ; Animations & drawings
+(defn draw-tree [tree])
+
+(def min-r 10)
+
 (defn setup []
-	(q/frame-rate 1)
-	(q/background (q/color 0 0 0 1)))
+	(do
+		(q/background (q/color 0 0 0 1))
+		; initial state
+		{:x 0 :y 0 :r min-r}))
 
-(defn draw []
-	(q/stroke (q/random 255))
-	(q/stroke-weight (q/random 10))
-	(q/fill (q/random 255))
-	
-	(let [diam (q/random 100)
-				x		 (q/random (q/width))
-				y		 (q/random (q/height))]
-		(q/ellipse x y diam diam)))
+(defn update-circle [state]
+	(update-in state [:r] inc))
 
-(q/defsketch personal-site-clj
+(defn draw [state]
+	; (q/background 255)
+	(q/ellipse (:x state) (:y state) (:r state) (:r state)))
+
+(defn shrink [r]
+	(max min-r (- r 3)))
+
+(defn mouse-moved [state event]
+	(-> state
+		(assoc :x (:x event) :y (:y event))
+		(update-in [:r] shrink)))
+
+(q/defsketch fun-mode-times
 	:host "test-canvas"
-	:settings #(q/smooth 2)
+	:size [(- (.-innerWidth js/window) 25) 500]
 	:setup setup
 	:draw draw
-	:size [(- (.-innerWidth js/window) 25) 500])
-
-
-
+	:update update-circle
+	:mouse-moved mouse-moved
+	:middleware [m/fun-mode])
 
 (defn render [] nil)
-; (defn render []
-; 	(set! (.-innerHTML (js/document.getElementById "replace-this"))
-; 				"TEXT HERE"))
