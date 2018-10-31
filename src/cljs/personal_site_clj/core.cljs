@@ -74,7 +74,7 @@
 
 (defn rotate-right [{:keys [el left right] :as tree}]
 	(if left
-		(-> Node (:el left) (:left left) (->Node el (:right left) right))
+		(->Node (:el left) (:left left) (->Node el (:right left) right))
 		tree))
 
 (defn is-left-case? [tree]
@@ -138,7 +138,7 @@
 	:settings #(q/smooth 2)
 	:setup setup
 	:draw draw
-	:size [(- (.-innerWidth js/window) 25) 300])
+	:size [(- (.-innerWidth js/window) 25) 500])
 
 
 
