@@ -120,30 +120,52 @@
 (trigger-when-clicked "menu-link" close-menu)
 
 ; Animations & drawings
-(defn draw-tree [tree])
 
-(def min-r 10)
+(def tree-settings
+	{:x-spread 200
+	 :node-r 20
+	 :level-height 50})
 
 (defn setup []
 	(do
+		(q/frame-rate 1)
 		(q/background (q/color 0 0 0 1))
-		; initial state
-		{:x 0 :y 0 :r min-r}))
+		(let [tree (seq->avl '(1 2 3 4 5 6 7 8 9))]
+			(println tree)
+			; initial state
+			{:x 400 :y 50 :tree tree})))
 
 (defn update-circle [state]
 	(update-in state [:r] inc))
 
+(defn draw-tree
+	([tree x y]
+		(draw-tree tree x y 0))
+	([tree x base-y depth]
+		(let [y (+ base-y (:level-height tree-settings))
+					r (:node-r tree-settings)
+					x-delta (/ (:x-spread tree-settings) (Math/pow 2 (inc depth)))]
+			(q/ellipse x y r r)
+			(q/text (:el tree) (+ x 10) y)
+			(if (nil? (:left tree))
+				nil
+				(draw-tree (:left tree) (- x x-delta) y (inc depth)))
+			(if (nil? (:right tree))
+				nil
+				(draw-tree (:right tree) (+ x x-delta) y (inc depth))))))
+
+
 (defn draw [state]
-	; (q/background 255)
-	(q/ellipse (:x state) (:y state) (:r state) (:r state)))
+	; traverse & draw the tree
+	(draw-tree (:tree state) (:x state) (:y state)))
 
-(defn shrink [r]
-	(max min-r (- r 3)))
+; (defn shrink [r]
+; 	(max min-r (- r 3)))
 
-(defn mouse-moved [state event]
-	(-> state
-		(assoc :x (:x event) :y (:y event))
-		(update-in [:r] shrink)))
+; (defn mouse-moved [state event]
+; 	(-> state
+; 		(assoc :x (:x event) :y (:y event))
+; 		(update-in [:r] shrink)))
 
 (q/defsketch fun-mode-times
 	:host "test-canvas"
@@ -151,7 +173,6 @@
 	:setup setup
 	:draw draw
 	:update update-circle
-	:mouse-moved mouse-moved
 	:middleware [m/fun-mode])
 
 (defn render [] nil)
