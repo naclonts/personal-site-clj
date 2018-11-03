@@ -31,6 +31,7 @@
 		+1 :right-heavy
 		+2 :imbalanced-right))
 
+(declare avl-node)
 (defn rotate-left [node]
 	"Return tree rotated left."
 	(let [{:keys [key value left right]} node
@@ -98,7 +99,6 @@
 (defn tree-visualize
   ([tree] (tree-visualize tree 0))
 	([{:keys [key value left right] :as tree} depth]
-		(println (str "key: " key ", value: " value))
     (if tree
       (str (tree-visualize right (inc depth)) (tree-tabs depth) key "\n" (tree-visualize left (inc depth)))
       (str (tree-tabs depth) "~\n"))))
@@ -133,61 +133,53 @@
 (trigger-when-class-clicked "hamburger" toggle-menu)
 (trigger-when-class-clicked "menu-link" close-menu)
 
-; ; Animations & drawings
+; Animations & drawings
 
-; (def tree-settings
-; 	{:x-spread 200
-; 	 :node-r 20
-; 	 :level-height 50})
+(def tree-settings
+	{:x-spread 200
+	 :node-r 20
+	 :level-height 75})
 
-; (defn setup []
-; 	(do
-; 		(q/frame-rate 1)
-; 		(q/background (q/color 0 0 0 1))
-; 		(let [tree (seq->avl '(1 2 3 4 5 6 7 8 9))]
-; 			(prn tree)
-; 			(tree-visualise tree)
-; 			; initial state
-; 			{:x 400 :y 50 :tree tree})))
+(defn setup []
+	(do
+		(q/frame-rate 1)
+		(q/background (q/color 0 0 0 1))
+		(let [tree (map->avl (into {} (map vector (range 0 10) (repeat 10 nil))))]
+			(prn tree)
+			(tree-visualize tree)
+			; initial state
+			{:x 400 :y 50 :tree tree})))
 
-; (defn update-circle [state]
-; 	(update-in state [:r] inc))
+(defn update-circle [state]
+	(update-in state [:r] inc))
 
-; (defn draw-tree
-; 	([tree x y]
-; 		(draw-tree tree x y 0))
-; 	([tree x base-y depth]
-; 		(let [y (+ base-y (:level-height tree-settings))
-; 					r (:node-r tree-settings)
-; 					x-delta (/ (:x-spread tree-settings) (Math/pow 2 (inc depth)))]
-; 			(q/ellipse x y r r)
-; 			(q/text (:el tree) (+ x 10) y)
-; 			(if (nil? (:left tree))
-; 				nil
-; 				(draw-tree (:left tree) (- x x-delta) y (inc depth)))
-; 			(if (nil? (:right tree))
-; 				nil
-; 				(draw-tree (:right tree) (+ x x-delta) y (inc depth))))))
+(defn draw-tree
+	([tree x y]
+		(draw-tree tree x y 0))
+	([tree x base-y depth]
+		(let [y (+ base-y (:level-height tree-settings))
+					r (:node-r tree-settings)
+					x-delta (/ (:x-spread tree-settings) (Math/pow 2 (inc depth)))]
+			(q/ellipse x y r r)
+			(q/text (:key tree) (+ x 10) y)
+			(if (nil? (:left tree))
+				nil
+				(draw-tree (:left tree) (- x x-delta) y (inc depth)))
+			(if (nil? (:right tree))
+				nil
+				(draw-tree (:right tree) (+ x x-delta) y (inc depth))))))
 
 
-; (defn draw [state]
-; 	; traverse & draw the tree
-; 	(draw-tree (:tree state) (:x state) (:y state)))
+(defn draw [state]
+	; traverse & draw the tree
+	(draw-tree (:tree state) (:x state) (:y state)))
 
-; ; (defn shrink [r]
-; ; 	(max min-r (- r 3)))
-
-; ; (defn mouse-moved [state event]
-; ; 	(-> state
-; ; 		(assoc :x (:x event) :y (:y event))
-; ; 		(update-in [:r] shrink)))
-
-; (q/defsketch fun-mode-times
-; 	:host "test-canvas"
-; 	:size [(- (.-innerWidth js/window) 25) 500]
-; 	:setup setup
-; 	:draw draw
-; 	:update update-circle
-; 	:middleware [m/fun-mode])
+(q/defsketch fun-mode-times
+	:host "test-canvas"
+	:size [(- (.-innerWidth js/window) 25) 500]
+	:setup setup
+	:draw draw
+	:update update-circle
+	:middleware [m/fun-mode])
 
 (defn render [] nil)
