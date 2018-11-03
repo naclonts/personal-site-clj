@@ -144,7 +144,9 @@
 	(do
 		(q/frame-rate 1)
 		(q/background (q/color 0 0 0 1))
-		(let [tree (map->avl (into {} (map vector (range 0 10) (repeat 10 nil))))]
+		(q/no-fill)
+		(q/stroke 240)
+		(let [tree (map->avl (into {} (map vector (range 0 24) (repeat 24 nil))))]
 			(prn tree)
 			(tree-visualize tree)
 			; initial state
@@ -156,22 +158,29 @@
 (defn draw-tree
 	([tree x y]
 		(draw-tree tree x y 0))
-	([tree x base-y depth]
-		(let [y (+ base-y (:level-height tree-settings))
+	([tree x y depth]
+		(let [next-y (+ y (:level-height tree-settings))
 					r (:node-r tree-settings)
 					x-delta (/ (:x-spread tree-settings) (Math/pow 2 (inc depth)))]
+			(q/no-fill)
 			(q/ellipse x y r r)
-			(q/text (:key tree) (+ x 10) y)
+			(q/fill 240)
+			(q/text (:key tree) (- x 5) (+ y 5))
 			(if (nil? (:left tree))
 				nil
-				(draw-tree (:left tree) (- x x-delta) y (inc depth)))
+				(let [next-x (- x x-delta)]
+					(q/line x y next-x next-y)
+					(draw-tree (:left tree) next-x next-y (inc depth))))
 			(if (nil? (:right tree))
 				nil
-				(draw-tree (:right tree) (+ x x-delta) y (inc depth))))))
+				(let [next-x (+ x x-delta)]
+					(q/line x y next-x next-y)
+					(draw-tree (:right tree) next-x next-y (inc depth)))))))
 
 
 (defn draw [state]
 	; traverse & draw the tree
+	(q/background (q/color 0 0 0 1))
 	(draw-tree (:tree state) (:x state) (:y state)))
 
 (q/defsketch fun-mode-times
