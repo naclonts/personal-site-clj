@@ -79,15 +79,20 @@
 		tree))
 
 (defn is-left-case? [tree]
+	(prn "LL case")
 	(< (factor tree) -1))
 (defn is-left-right-case? [tree]
+	(prn "LR case")
 	(and (is-left-case? tree) (> (factor (:right tree)) 0)))
 (defn is-right-case? [tree]
+	(prn "RR case")
 	(> (factor tree) 1))
 (defn is-right-left-case? [tree]
+	(prn "RL case")
 	(and (is-right-case? tree) (< (factor (:left tree)) 0)))
 
 (defn tree-balance [{:keys [el left right] :as tree}]
+	(prn (str "el: " el ", factor: " (factor tree) "\r\n "))
 	(cond
 		(is-right-left-case? tree) (rotate-right (->Node el (rotate-left left) right))
 		(is-left-right-case? tree) (rotate-left (->Node el left (rotate-right right)))
@@ -99,9 +104,18 @@
 (def avl-remove (comp tree-balance tree-remove))
 (def seq->avl (partial reduce avl-insert nil))
 
+(defn tree-tabs [n]
+  (clojure.string/join(repeat n "\t")))
+
+(defn tree-visualise
+  ([tree] (tree-visualise tree 0))
+  ([{:keys [el left right] :as tree} depth]
+    (if tree
+      (str (tree-visualise right (inc depth)) (tree-tabs depth) el "\n" (tree-visualise left (inc depth)))
+      (str (tree-tabs depth) "~\n"))))
 
 ; Event handlers
-(defn trigger-when-clicked [class-name f]
+(defn trigger-when-class-clicked [class-name f]
 	(let [elements (.getElementsByClassName js/document class-name)]
 		(doall (map #(.addEventListener % "click" f) elements))))
 
@@ -116,8 +130,8 @@
 		(.add (.-classList menu) "hidden")
 		(.remove (.-classList hamburger) "is-active")))
 
-(trigger-when-clicked "hamburger" toggle-menu)
-(trigger-when-clicked "menu-link" close-menu)
+(trigger-when-class-clicked "hamburger" toggle-menu)
+(trigger-when-class-clicked "menu-link" close-menu)
 
 ; Animations & drawings
 
@@ -131,7 +145,8 @@
 		(q/frame-rate 1)
 		(q/background (q/color 0 0 0 1))
 		(let [tree (seq->avl '(1 2 3 4 5 6 7 8 9))]
-			(println tree)
+			(prn tree)
+			(tree-visualise tree)
 			; initial state
 			{:x 400 :y 50 :tree tree})))
 
