@@ -105,11 +105,16 @@
 
 (defn tree-print [tree] (println (tree-visualize tree)))
 
+(defn map->avl [key-val-map]
+	(reduce
+		(fn [tree [key val]] (avl-insert key val tree))
+		nil
+		(seq key-val-map)))
 
 
 
 
-Event handlers
+; Event handlers
 (defn trigger-when-class-clicked [class-name f]
 	(let [elements (.getElementsByClassName js/document class-name)]
 		(doall (map #(.addEventListener % "click" f) elements))))
