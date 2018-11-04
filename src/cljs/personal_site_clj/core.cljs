@@ -142,20 +142,24 @@
 
 (defn setup []
 	(do
-		(q/frame-rate 1)
+		(q/frame-rate 30)
 		(q/background (q/color 0 0 0 1))
 		; (q/no-fill)
 		(q/color-mode :hsb)
 		(q/stroke 240)
 		(q/stroke-weight 2)
-		(let [tree (map->avl (into {} (map vector (range 0 24) (repeat 24 nil))))]
+		(let [tree (map->avl (into {} (map vector (range 0 1) (repeat 1 nil))))]
 			(prn tree)
 			(tree-visualize tree)
 			; initial state
-			{:x 400 :y 50 :tree tree})))
+			{:x 400 :y 300 :tree tree :rotation-angle 0})))
 
-(defn update-circle [state]
-	(update-in state [:r] inc))
+(defn update-tree [state]
+	(let [update-time? (= 0 (mod (q/frame-count) 30))
+				next-key (Math/ceil (/ (q/frame-count) 30))]
+		(if update-time?
+			(assoc state :tree (avl-insert next-key nil (:tree state)))
+			state)))
 
 (defn draw-tree
 	([tree x y]
@@ -182,17 +186,26 @@
 				(draw-tree (:right tree) (+ x x-delta) next-y x y (inc depth))))))
 
 
+(defn mouse-moved [state event]
+	"Save angle between base of tree and mouse."
+	(let [dy (- (:y state) (:y event))
+				dx (- (:x state) (:x event))]
+		(assoc state :rotation-angle (+ (Math/atan2 dy dx) (/ Math/PI 2)))))
+
 (defn draw [state]
 	; traverse & draw the tree
 	(q/background (q/color 0 0 0 1))
-	(draw-tree (:tree state) (:x state) (:y state)))
+	(q/translate (:x state) (:y state))
+	(q/rotate (:rotation-angle state))
+	(draw-tree (:tree state) 0 0))
 
 (q/defsketch fun-mode-times
 	:host "test-canvas"
-	:size [(- (.-innerWidth js/window) 25) 500]
+	:size [(- (.-innerWidth js/window) 25) 750]
 	:setup setup
 	:draw draw
-	:update update-circle
+	:update update-tree
+	:mouse-moved mouse-moved
 	:middleware [m/fun-mode])
 
 (defn render [] nil)
