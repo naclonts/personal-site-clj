@@ -144,8 +144,10 @@
 	(do
 		(q/frame-rate 1)
 		(q/background (q/color 0 0 0 1))
-		(q/no-fill)
+		; (q/no-fill)
+		(q/color-mode :hsb)
 		(q/stroke 240)
+		(q/stroke-weight 2)
 		(let [tree (map->avl (into {} (map vector (range 0 24) (repeat 24 nil))))]
 			(prn tree)
 			(tree-visualize tree)
@@ -157,25 +159,27 @@
 
 (defn draw-tree
 	([tree x y]
-		(draw-tree tree x y 0))
-	([tree x y depth]
+		(draw-tree tree x y nil nil 0))
+	([tree x y last-x last-y depth]
 		(let [next-y (+ y (:level-height tree-settings))
 					r (:node-r tree-settings)
 					x-delta (/ (:x-spread tree-settings) (Math/pow 2 (inc depth)))]
-			(q/no-fill)
+			; draw line from parent
+			(if (not (or (nil? last-x) (nil? last-y)))
+				(do
+					(q/line last-x (+ last-y (/ r 2)) x (- y (/ r 2)))))
+			; draw the ellipse
+			(q/fill 100 98 60 0)
 			(q/ellipse x y r r)
 			(q/fill 240)
 			(q/text (:key tree) (- x 5) (+ y 5))
+			; and continue down the tree
 			(if (nil? (:left tree))
 				nil
-				(let [next-x (- x x-delta)]
-					(q/line x y next-x next-y)
-					(draw-tree (:left tree) next-x next-y (inc depth))))
+				(draw-tree (:left tree) (- x x-delta) next-y x y (inc depth)))
 			(if (nil? (:right tree))
 				nil
-				(let [next-x (+ x x-delta)]
-					(q/line x y next-x next-y)
-					(draw-tree (:right tree) next-x next-y (inc depth)))))))
+				(draw-tree (:right tree) (+ x x-delta) next-y x y (inc depth))))))
 
 
 (defn draw [state]
