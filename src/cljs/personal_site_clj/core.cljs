@@ -2,7 +2,7 @@
 	(:require [quil.core :as q :include-macros true]
 						[quil.middleware :as m]
 						[personal-site-clj.avl-tree :as avl]))
-(println avl)
+
 (enable-console-print!)
 
 ; Allow iteration over HTML elements
@@ -10,6 +10,18 @@
 	ISeqable
 	(-seq [array] (array-seq array 0)))
 
+; Intro / above fold stuff
+(def intro-text "Hi, I'm Nathan")
+(defn type-name [text]
+	(let [el (.getElementById js/document "typing-intro")]
+		(set! (.-innerHTML el) (str (.-innerHTML el) (subs text 0 1)))
+		(js/setTimeout (fn [] (type-name (subs text 1))) (+ 50 (rand-int 50)))))
+(.addEventListener
+	js/window
+	"DOMContentLoaded"
+	(fn []
+		(set! (.-innerHTML (.getElementById js/document "typing-intro")) "")
+		(type-name intro-text)))
 
 ;	;	;	;	;	;	;	;	;	;	;	;	;
 ; Event handlers
