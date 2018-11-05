@@ -202,21 +202,15 @@
 					r (:node-r tree-settings)
 					x-delta (/ (:x-spread tree-settings) (Math/pow 2 (inc depth)))
 					last-position (get @old-positions (:key tree))]
-			; draw line from parent
-			(if (not (or (nil? last-x) (nil? last-y)))
-				(do
-					(q/line last-x (+ last-y (/ r 2)) x (- y (/ r 2)))))
-			; apply any current rotations
-			(q/push-matrix)
-			(println last-position " at key " (:key tree))
 
 			(let [old-x (get last-position :x)
 						old-y (get last-position :y)
 						p progress-to-next-step]
 				(let [current-x (if (nil? old-x) x (+ (* p x) (* (- 1 p) old-x)))
 							current-y (if (nil? old-y) y (+ (* p y) (* (- 1 p) old-y)))]
-					(println "---------------" p)
-					(println "old " old-x "," old-y " current " current-x "," current-y " latest " x "," y)
+					; draw line from parent
+					(if (not (or (nil? last-x) (nil? last-y)))
+						(q/line last-x (+ last-y (/ r 2)) current-x (- current-y (/ r 2))))
 					; draw the ellipse
 					(q/fill 100 98 60 0)
 					(q/ellipse current-x current-y r r)
@@ -225,17 +219,26 @@
 					; and continue down the tree
 					(if (nil? (:left tree))
 						nil
-						(draw-tree (:left tree) (- current-x x-delta) next-y current-x current-y (inc depth) p))
+						(draw-tree
+							(:left tree)
+							(- current-x x-delta)
+							next-y
+							current-x
+							current-y
+							(inc depth)
+							p))
 					(if (nil? (:right tree))
 						nil
-						(draw-tree (:right tree) (+ current-x x-delta) next-y current-x current-y (inc depth) p))
-					(if (> progress-to-next-step 0.95) (swap! old-positions assoc (:key tree) {:x x :y y}))))
-
-			
-
-			; remove any rotations
-			(q/pop-matrix))))
-
+						(draw-tree
+							(:right tree)
+							(+ current-x x-delta)
+							next-y
+							current-x
+							current-y
+							(inc depth)
+							p))
+					(if (> progress-to-next-step 0.95)
+						(swap! old-positions assoc (:key tree) {:x x :y y})))))))
 
 
 (defn draw [state]
