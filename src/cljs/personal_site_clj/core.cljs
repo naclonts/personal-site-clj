@@ -22,6 +22,11 @@
 
 (defrecord AvlTree [key value left right])
 
+(defn tree-max [tree]
+	(if (nil? (:right tree))
+		(:key tree)
+		(recur (:right tree))))
+
 (defn tree-height
 	([tree] (tree-height tree 0))
 	([tree height] 
@@ -148,18 +153,25 @@
 ;	;	;	;	;	;	;	;	;	;	;	;	;
 ; Animations & drawings
 ;	;	;	;	;	;	;	;	;	;	;	;	;
-
-(def FRAME-RATE 30)
-(def HALF-PI (/ Math/PI 2))
-; flag to determine if things need to be redrawn in this frame
-(def dirty-state (atom true))
 ;
-(def old-positions (atom {}))
-
+(def FRAME-RATE 30)
+(def UPDATE-TREE-FREQUENCY (* 2 FRAME-RATE))
+(def PROGRESS-INCREMENT (/ 0.5 FRAME-RATE))
 (def tree-settings
 	{:x-spread 200
 	 :node-r 20
-	 :level-height 75})
+	 :level-height 100})
+
+; flag to determine if things need to be redrawn in this frame
+(def dirty-state (atom true))
+; stores last :x :y positions of nodes, to help smoothly animate to new positions
+(def old-positions (atom {}))
+
+
+(defn queue-insertion [{tree :tree :as state}]
+	(-> state
+		(assoc :tree (avl-insert (inc (tree-max tree)) nil tree))
+		(assoc :progress-to-next-step 0)))
 
 (defn setup []
 	(do
@@ -169,10 +181,13 @@
 		(q/stroke 177 99 99)
 		(q/stroke-weight 6)
 		(let [tree (map->avl (into {} (map vector (range 0 1) (repeat 1 nil))))]
-			(prn tree)
-			(tree-visualize tree)
 			; initial state
-			{:x 400 :y 300 :tree tree :rotation-angle 0 :progress-to-next-step 0})))
+			{:x 400
+			 :y 300
+			 :tree tree
+			 :rotation-angle 0
+			 :progress-to-next-step 0
+			 :last-key 0})))
 
 (defn mouse-moved [state event]
 	"Save angle between base of tree and mouse."
@@ -181,16 +196,22 @@
 		(swap! dirty-state (constantly true))
 		(assoc state :rotation-angle (+ (Math/atan2 dy dx) (/ Math/PI 2)))))
 
-(defn update-tree [state]
-	(let [update-time? (= 0 (mod (q/frame-count) (* 2 FRAME-RATE)))
-				next-key (Math/ceil (/ (q/frame-count) (* 2 FRAME-RATE)))]
-		(if (and update-time? (< (tree-height (:tree state)) 5))
+(defn mouse-clicked [state event]
+	(queue-insertion state))
+
+(defn update-tree [{tree :tree :as state}]
+	(let [update-time? (= 0 (mod (q/frame-count) UPDATE-TREE-FREQUENCY))
+				; default to stop adding nodes when at a height of 5
+				do-more-updates? (< (tree-height tree) 5)]
+		(if (not do-more-updates?)
+			(swap! dirty-state (constantly false)))
+		(if (and do-more-updates? update-time?)
 			(do
 				(swap! dirty-state (constantly true))
-				(-> state
-					(assoc :tree (avl-insert next-key nil (:tree state)))
-					(assoc :progress-to-next-step 0)))
-			(assoc state :progress-to-next-step (+ (:progress-to-next-step state) (/ 0.5 FRAME-RATE))))))
+				(queue-insertion state))
+			(assoc state
+				:progress-to-next-step
+				(+ (:progress-to-next-step state) PROGRESS-INCREMENT)))))
 
 (defn draw-tree
 	([tree x y progress-to-next-step]
@@ -235,18 +256,23 @@
 							current-y
 							(inc depth)
 							p))
-					(if (> progress-to-next-step 0.95)
+					(if (> progress-to-next-step (- 1 PROGRESS-INCREMENT))
 						(swap! old-positions assoc (:key tree) {:x x :y y})))))))
 
+(defn draw-buttons []
+	(q/fill 177 99 99 0)
+	(q/line 50 50 50 100)
+	(q/line 25 75 75 75))
 
 (defn draw [state]
 	; traverse & draw the tree
 	(when @dirty-state
+		(println "re-drawing")
 		(q/background (q/color 0 0 0 1))
+		(draw-buttons)
 		(q/translate (:x state) (:y state))
 		(q/rotate (:rotation-angle state))
 		(draw-tree (:tree state) 0 0 (:progress-to-next-step state))))
-	; (swap! dirty-state (constantly false))
 		
 
 (q/defsketch fun-mode-times
@@ -256,6 +282,7 @@
 	:draw draw
 	:update update-tree
 	:mouse-moved mouse-moved
+	:mouse-clicked mouse-clicked
 	:middleware [m/fun-mode])
 
 (defn render [] nil)
