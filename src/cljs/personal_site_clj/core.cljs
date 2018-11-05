@@ -149,7 +149,7 @@
 ; Animations & drawings
 ;	;	;	;	;	;	;	;	;	;	;	;	;
 
-(def FRAME-RATE 20)
+(def FRAME-RATE 30)
 (def HALF-PI (/ Math/PI 2))
 ; flag to determine if things need to be redrawn in this frame
 (def dirty-state (atom true))
@@ -165,9 +165,9 @@
 	(do
 		(q/frame-rate FRAME-RATE)
 		(q/background (q/color 0 0 0 1))
-		(q/color-mode :hsb)
-		(q/stroke 240)
-		(q/stroke-weight 2)
+		(q/color-mode :hsb 360 100 100)
+		(q/stroke 177 99 99)
+		(q/stroke-weight 6)
 		(let [tree (map->avl (into {} (map vector (range 0 1) (repeat 1 nil))))]
 			(prn tree)
 			(tree-visualize tree)
@@ -192,8 +192,6 @@
 					(assoc :progress-to-next-step 0)))
 			(assoc state :progress-to-next-step (+ (:progress-to-next-step state) (/ 0.5 FRAME-RATE))))))
 
-; (defn progress-to-next-step [] (/ (mod (/ FRAME-RATE 1) (q/frame-count)) FRAME-RATE))
-
 (defn draw-tree
 	([tree x y progress-to-next-step]
 		(draw-tree tree x y nil nil 0 progress-to-next-step))
@@ -212,9 +210,9 @@
 					(if (not (or (nil? last-x) (nil? last-y)))
 						(q/line last-x (+ last-y (/ r 2)) current-x (- current-y (/ r 2))))
 					; draw the ellipse
-					(q/fill 100 98 60 0)
+					(q/fill 177 99 99 0)
 					(q/ellipse current-x current-y r r)
-					(q/fill 240)
+					(q/fill 360)
 					(q/text (:key tree) (- current-x 5) (+ current-y 5))
 					; and continue down the tree
 					(if (nil? (:left tree))
@@ -244,8 +242,6 @@
 (defn draw [state]
 	; traverse & draw the tree
 	(when @dirty-state
-		(println "re-drawing")
-		(println @old-positions)
 		(q/background (q/color 0 0 0 1))
 		(q/translate (:x state) (:y state))
 		(q/rotate (:rotation-angle state))
