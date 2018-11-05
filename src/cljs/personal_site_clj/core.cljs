@@ -203,8 +203,6 @@
 	(let [update-time? (= 0 (mod (q/frame-count) UPDATE-TREE-FREQUENCY))
 				; default to stop adding nodes when at a height of 5
 				do-more-updates? (< (tree-height tree) 5)]
-		(if (not do-more-updates?)
-			(swap! dirty-state (constantly false)))
 		(if (and do-more-updates? update-time?)
 			(do
 				(swap! dirty-state (constantly true))
