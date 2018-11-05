@@ -1,4 +1,8 @@
 /*
+ * Some adjustments made by Nathan Clonts
+ */
+
+/*
 * Skeleton V2.0.4
 * Copyright 2014, Dave Gamache
 * www.getskeleton.com
@@ -158,9 +162,11 @@ p {
 /* Links
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 a {
-  color: #1EAEDB; }
+	/* color: #1EAEDB; */
+	color: inherit; }
 a:hover {
-  color: #0FA0CE; }
+	/* color: #0FA0CE; } */
+	color: inherit; }
 
 
 /* Buttons
@@ -173,9 +179,8 @@ input[type="button"] {
   display: inline-block;
   height: 38px;
   padding: 0 30px;
-  color: #555;
   text-align: center;
-  font-size: 11px;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 38px;
   letter-spacing: .1rem;
@@ -197,7 +202,7 @@ button:focus,
 input[type="submit"]:focus,
 input[type="reset"]:focus,
 input[type="button"]:focus {
-  color: #333;
+  /* color: #333; */
   border-color: #888;
   outline: 0; }
 .button.button-primary,

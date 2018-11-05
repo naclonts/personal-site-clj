@@ -19,6 +19,8 @@ body {
 	max-width: 800px;
 	min-height: 85vh;
 	margin: auto;
+
+	text-align: center;
 }
 .above-fold h3 {
 	text-align: center;
@@ -110,6 +112,11 @@ canvas {
     z-index: 3;
 }
 
+/* Buttons */
+button {
+	
+}
+
 /***************************/
 /* Hamburger button styles */
 .hamburger {
@@ -123,7 +130,7 @@ canvas {
 }
 
 .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
-	background-color: rgb(218, 169, 124);
+	background-color: rgb(255, 146, 44);
 }
 
 .hamburger:focus {
