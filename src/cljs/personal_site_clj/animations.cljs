@@ -17,7 +17,7 @@
 			(< (.-top el-rect) (/ window-height 2)))))
 
 (def FRAME-RATE 30)
-(def UPDATE-TREE-FREQUENCY (* 2 FRAME-RATE))
+(def UPDATE-TREE-PERIOD (* 2 FRAME-RATE))
 (def PROGRESS-INCREMENT (/ 0.5 FRAME-RATE))
 (def tree-settings
 	{:x-spread 200
@@ -26,14 +26,19 @@
 
 ; flag to determine if things need to be redrawn in this frame
 (def dirty-state (atom true))
+
 ; stores last :x :y positions of nodes, to help smoothly animate to new positions
+; format:
+;		{ <node-key-0> {:x 42, :y 42},
+;			<node-key-1> {:x 21  :y 84},
+;			... }
 (def old-positions (atom {}))
 
 
 (defn queue-insertion [{tree :tree :as state}]
 	(-> state
 		(assoc :tree (avl/avl-insert (inc (avl/tree-max tree)) nil tree))
-		(assoc :progress-to-next-step 0)))
+		(assoc :frames-to-next-update UPDATE-TREE-PERIOD)))
 
 (defn setup []
 	(do
@@ -49,7 +54,8 @@
 			 :tree tree
 			 :rotation-angle 0
 			 :progress-to-next-step 0
-			 :last-key 0})))
+			 :last-key 0
+			 :frames-to-next-update UPDATE-TREE-PERIOD})))
 
 (defn mouse-moved [state event]
 	"Save angle between base of tree and mouse."
@@ -59,18 +65,26 @@
 		(assoc state :rotation-angle (+ (Math/atan2 dy dx) (/ Math/PI 2)))))
 
 (defn mouse-clicked [state event]
-	(queue-insertion state))
+	"Inserts a new node."
+	; (swap! old-positions {})
+	(-> state
+		(assoc :frames-to-next-update 0)
+		(assoc :progress-to-next-step 1)))
 
-(defn update-tree [{tree :tree :as state}]
-	(let [update-time? (= 0 (mod (q/frame-count) UPDATE-TREE-FREQUENCY))]
+(defn update-tree [{tree :tree, frames :frames-to-next-update :as state}]
+	(let [update-time? (<= frames 0)]
 		(if (mostly-inside-window? "avl-canvas")
 			(if update-time?
 				(do
 					(swap! dirty-state (constantly true))
-					(queue-insertion state))
-				(assoc state
-					:progress-to-next-step
-					(+ (:progress-to-next-step state) PROGRESS-INCREMENT)))
+					(-> state
+						(assoc :progress-to-next-step 0)
+						(queue-insertion)))
+				(-> state
+					(assoc :frames-to-next-update (- frames 1))
+					(assoc
+						:progress-to-next-step
+						(+ (:progress-to-next-step state) PROGRESS-INCREMENT))))
 
 			; when outside window, stop drawing
 			(do
@@ -86,9 +100,11 @@
 					x-delta (/ (:x-spread tree-settings) (Math/pow 2 (inc depth)))
 					last-position (get @old-positions (:key tree))]
 
+			; old-x/y is the last "stable" location the node ended
 			(let [old-x (get last-position :x)
 						old-y (get last-position :y)
 						p progress-to-next-step]
+				; current-x/y interpolates between the "new" stable x/y and the original spot
 				(let [current-x (if (nil? old-x) x (+ (* p x) (* (- 1 p) old-x)))
 							current-y (if (nil? old-y) y (+ (* p y) (* (- 1 p) old-y)))]
 					; draw line from parent
@@ -99,7 +115,7 @@
 					(q/ellipse current-x current-y r r)
 					(q/fill 360)
 					(q/text (:key tree) (- current-x 5) (+ current-y 5))
-					; and continue down the tree
+					; and continue down the tree....
 					(if (nil? (:left tree))
 						nil
 						(draw-tree

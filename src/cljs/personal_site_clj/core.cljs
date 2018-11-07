@@ -1,5 +1,5 @@
-(ns personal-site-clj.core)
-	; (:require [personal-site-clj.animations :as animations]))
+(ns personal-site-clj.core
+	(:require [personal-site-clj.animations :as animations]))
 
 (enable-console-print!)
 
