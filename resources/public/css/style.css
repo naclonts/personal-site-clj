@@ -27,6 +27,7 @@ body {
 }
 canvas {
 	overflow: hidden;
+	cursor: pointer;
 }
 
 

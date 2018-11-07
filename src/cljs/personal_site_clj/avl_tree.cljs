@@ -106,3 +106,13 @@
 		(fn [tree [key val]] (avl-insert key val tree))
 		nil
 		(seq key-val-map)))
+
+(defn count-nodes 
+	([tree] (count-nodes tree 0))
+	([tree n]
+		(if (nil? tree)
+			0
+			(+
+				1
+				(count-nodes (:right tree))
+				(count-nodes (:left tree))))))
