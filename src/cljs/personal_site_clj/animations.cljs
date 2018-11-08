@@ -55,7 +55,8 @@
 			 :rotation-angle 0
 			 :progress-to-next-step 0
 			 :last-key 0
-			 :frames-to-next-update UPDATE-TREE-PERIOD})))
+			 :frames-to-next-update UPDATE-TREE-PERIOD
+			 :max-node-count 15})))
 
 (defn mouse-moved [state event]
 	"Save angle between base of tree and mouse."
@@ -65,16 +66,16 @@
 		(assoc state :rotation-angle (+ (Math/atan2 dy dx) (/ Math/PI 2)))))
 
 (defn mouse-clicked [state event]
-	"Inserts a new node."
-	; (swap! old-positions {})
+	"Increase number of nodes displayed."
 	(-> state
-		(assoc :frames-to-next-update 0)
-		(assoc :progress-to-next-step 1)))
+		(assoc :max-node-count (inc (:max-node-count state)))))
 
-(defn update-tree [{tree :tree, frames :frames-to-next-update :as state}]
-	(let [update-time? (<= frames 0)]
+(defn update-tree [{tree :tree, frames :frames-to-next-update,
+										max-nodes :max-node-count :as state}]
+	(let [update-time? (<= frames 0)
+				at-max-count? (>= (avl/count-nodes tree) max-nodes)]
 		(if (mostly-inside-window? "avl-canvas")
-			(if update-time?
+			(if (and update-time? (not at-max-count?))
 				(do
 					(swap! dirty-state (constantly true))
 					(-> state
