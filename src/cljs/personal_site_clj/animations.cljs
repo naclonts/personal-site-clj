@@ -3,6 +3,8 @@
 						[quil.middleware :as m]
 						[personal-site-clj.avl-tree :as avl]))
 
+; @TODO import json data and draw it. Check out:
+; https://github.com/JulianBirch/cljs-ajax
 
 ;	;	;	;	;	;	;	;	;	;	;	;	;
 ; Animations & drawings
@@ -14,7 +16,8 @@
 	(let [el-rect (. (.getElementById js/document element-id) getBoundingClientRect)
 				window-height (.-innerHeight js/window)]
 		(and
-			(< (.-top el-rect) (/ window-height 2)))))
+			(< (.-top el-rect) (/ window-height 2))
+			(> (.-bottom el-rect) (/ window-height 2)))))
 
 (def FRAME-RATE 30)
 (def UPDATE-TREE-PERIOD (* 2 FRAME-RATE))
