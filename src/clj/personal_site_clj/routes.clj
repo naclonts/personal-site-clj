@@ -4,7 +4,7 @@
             [compojure.route :refer [resources]]
 						[ring.util.response :refer [response]]
 						[environ.core :refer [env]]
-						[personal-site-clj.mail :refer [mail]]))
+						[personal-site-clj.mail :as mail]))
 
 (defn home-routes [endpoint]
   (routes
@@ -15,6 +15,6 @@
 					response
 					(assoc :headers { "Content-Type" "text/html; charset=utf-8" })))
 		(POST "/contact-form" req
-			(mail)
+			(mail/contact-submission (req :params))
 			(str req (env :email-host-user)))
 		(resources "/")))
