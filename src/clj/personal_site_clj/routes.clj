@@ -15,8 +15,12 @@
 					response
 					(assoc :headers { "Content-Type" "text/html; charset=utf-8" })))
 		(POST "/contact-form" req
-			(mail/contact-submission (req :params))
-			(redirect "/#contact"))
+			(try
+				(do
+					(mail/contact-submission (req :params))
+					(str "Message sent successfully!"))
+				(catch Exception e
+					(str "Sorry! An error occurred while trying to send your message. Feel free to retry later, or email me at nathanclonts@gmail.com."))))
 		(resources "/")
 		; @TODO: add 404 page.
 		(ANY "/*" [path]

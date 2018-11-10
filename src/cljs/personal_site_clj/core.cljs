@@ -1,5 +1,6 @@
 (ns personal-site-clj.core
-	(:require [personal-site-clj.animations :as animations]))
+	(:require [personal-site-clj.animations :as animations]
+						[ajax.core :refer [POST]]))
 
 (enable-console-print!)
 
@@ -24,6 +25,8 @@
 ;	;	;	;	;	;	;	;	;	;	;	;	;
 ; Event handlers
 ;	;	;	;	;	;	;	;	;	;	;	;	;
+
+; Menus
 (defn trigger-when-class-clicked [class-name f]
 	(let [elements (.getElementsByClassName js/document class-name)]
 		(doall (map #(.addEventListener % "click" f) elements))))
@@ -42,6 +45,24 @@
 (trigger-when-class-clicked "hamburger" toggle-menu)
 (trigger-when-class-clicked "menu-link" close-menu)
 
+
+; Contact form - handle via Ajax to prevent page reloads.
+(let [form-el (.getElementById js/document "contact-form")
+			button (.getElementById js/document "contact-form-button")]
+	(defn update-info-message! [msg]
+		(set! (.-innerHTML (.getElementById js/document "contact-response-message")) msg))
+	(defn handle-response [res]
+		(update-info-message! res))
+	(defn submit-form [event]
+		(.preventDefault event)
+		(update-info-message! "Sending your message...")
+		(POST "/contact-form"
+			{:body (js/FormData. form-el)
+			 :handler handle-response
+			 :error-handler handle-response})
+		(.reset form-el))
+	(.addEventListener form-el "submit" submit-form)
+	(.addEventListener button "click" submit-form))
 
 
 (defn render [] nil)

@@ -51,7 +51,7 @@
 				
 			</div>
 			<div id="contact">
-				<form action="/contact-form" method="post" class="six columns offset-by-two">
+				<form id="contact-form" action="/contact-form" method="post" class="six columns offset-by-two">
 					<div>
 						<label for="name">Name</label>
 						<input type="text" id="name" name="name" class="twelve columns" />
@@ -64,7 +64,8 @@
 						<label for="message">Message</label>
 						<textarea id="message" name="message" rows="3" class="twelve columns"></textarea>
 					</div>
-					<div class="button-wrapper">
+					<div><p id="contact-response-message"></p></div>
+					<div class="button-wrapper" id="contact-form-button">
 						<button type="submit">Send</button>
 					</div>
 				</form>
