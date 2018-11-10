@@ -17,7 +17,8 @@
                  [com.stuartsierra/component "0.3.2"]
                  [org.danielsz/system "0.4.1"]
 								 [org.clojure/tools.namespace "0.2.11"]
-								 [quil "2.7.1"]]
+								 [quil "2.7.1"]
+								 [com.draines/postal "2.0.2"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]]
 
