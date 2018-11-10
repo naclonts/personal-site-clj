@@ -54,15 +54,15 @@
 				<form id="contact-form" action="/contact-form" method="post" class="six columns offset-by-two">
 					<div>
 						<label for="name">Name</label>
-						<input type="text" id="name" name="name" class="twelve columns" />
+						<input type="text" id="name" name="name" class="twelve columns" required />
 					</div>
 					<div>
 						<label for="mail">Email</label>
-						<input type="email" id="mail" name="email" class="twelve columns" />
+						<input type="email" id="mail" name="email" class="twelve columns" required />
 					</div>
 					<div>
 						<label for="message">Message</label>
-						<textarea id="message" name="message" rows="3" class="twelve columns"></textarea>
+						<textarea id="message" name="message" rows="3" class="twelve columns" required></textarea>
 					</div>
 					<div><p id="contact-response-message"></p></div>
 					<div class="button-wrapper" id="contact-form-button">

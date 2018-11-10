@@ -12,9 +12,12 @@
 ; Intro / above fold stuff
 (def intro-text "Develop The Web")
 (defn type-name [text]
-	(let [el (.getElementById js/document "typing-intro")]
-		(set! (.-innerHTML el) (str (.-innerHTML el) (subs text 0 1)))
-		(js/setTimeout (fn [] (type-name (subs text 1))) (+ 50 (rand-int 50)))))
+	(let [el (.getElementById js/document "typing-intro")
+				new-char (subs text 0 1)]
+		(set! (.-innerHTML el) (str (.-innerHTML el) new-char))
+		(js/setTimeout
+			(fn [] (type-name (subs text 1)))
+			(if (= new-char " ") 0 (+ 50 (rand-int 50))))))
 (.addEventListener
 	js/window
 	"DOMContentLoaded"
@@ -53,7 +56,7 @@
 		(set! (.-innerHTML (.getElementById js/document "contact-response-message")) msg))
 	(defn handle-response [res]
 		(update-info-message! res))
-	(defn submit-form [event]
+	(defn ^:export submit-form [event]
 		(.preventDefault event)
 		(update-info-message! "Sending your message...")
 		(POST "/contact-form"
@@ -61,8 +64,7 @@
 			 :handler handle-response
 			 :error-handler handle-response})
 		(.reset form-el))
-	(.addEventListener form-el "submit" submit-form)
-	(.addEventListener button "click" submit-form))
+	(.addEventListener form-el "submit" submit-form))
 
 
 (defn render [] nil)
