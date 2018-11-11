@@ -13,7 +13,7 @@
 												:subject subject
 												:body body}))
 
-(defn contact-submission [{:keys [name email message] :as params}]
+(defn contact-submission [name email message]
 	"Send to self a message submitted in the contact form."
 	(to-self
 		; subject
