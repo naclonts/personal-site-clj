@@ -5,8 +5,10 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.10.238" :scope "provided"]
-                 [com.cognitect/transit-clj "0.8.309"]
+								 [org.clojure/clojurescript "1.10.238" :scope "provided"]
+								 [org.clojure/tools.nrepl "0.2.12"]
+								 [com.cognitect/transit-clj "0.8.309"]
+								 [cljfmt "0.5.7"]
                  [ring "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
                  [bk/ring-gzip "0.3.0"]
@@ -19,9 +21,12 @@
 								 [org.clojure/tools.namespace "0.2.11"]
 								 [quil "2.7.1"]
 								 [cljs-ajax "0.7.5"]
+								 [hiccup "1.0.5"]
+								 [markdown-clj "1.0.5"]
 								 [com.draines/postal "2.0.2"]]
 
-  :plugins [[lein-cljsbuild "1.1.7"]]
+	:plugins [[lein-cljsbuild "1.1.7"]
+						[cider/cider-nrepl "0.15.1"]]
 
   :min-lein-version "2.6.1"
 

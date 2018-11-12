@@ -5,16 +5,18 @@
 						[ring.util.response :refer [response redirect]]
 						[ring.middleware.multipart-params :refer [multipart-params-request]]
 						[environ.core :refer [env]]
-						[personal-site-clj.mail :as mail]))
+						[personal-site-clj.mail :as mail]
+						[personal-site-clj.views :as views]))
 
 (defn home-routes [endpoint]
   (routes
 		(GET "/" req
-			(-> "public/index.html"
-					io/resource
-					io/input-stream
-					response
-					(assoc :headers { "Content-Type" "text/html; charset=utf-8" })))
+			(views/home-page)
+			; (-> "public/index.html"
+			; 		io/resource
+			; 		io/input-stream
+			; 		response
+			; 		(assoc :headers { "Content-Type" "text/html; charset=utf-8" })))
 		(POST "/contact-form" req
 			(try
 				(let [params ((multipart-params-request req) :params)]
