@@ -11,12 +11,7 @@
 (defn home-routes [endpoint]
   (routes
 		(GET "/" req
-			(views/home-page)
-			; (-> "public/index.html"
-			; 		io/resource
-			; 		io/input-stream
-			; 		response
-			; 		(assoc :headers { "Content-Type" "text/html; charset=utf-8" })))
+			(views/home-page))
 		(POST "/contact-form" req
 			(try
 				(let [params ((multipart-params-request req) :params)]
