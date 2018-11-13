@@ -6,11 +6,14 @@
 
 (defn page-head [title]
 	[:head
-		[:title title]
-		(page/include-css "/css/normalize.css")
-		(page/include-css "/css/skeleton.css")
-		(page/include-css "/css/hamburgers.css")
-		(page/include-css "/css/style.css")])
+	 [:title title]
+   [:meta {:charset "UTF-8"}]
+   [:meta {:name "viewport"
+           :content "width=device-width, initial-scale=1"}]
+   (page/include-css "/css/normalize.css")
+   (page/include-css "/css/skeleton.css")
+   (page/include-css "/css/hamburgers.css")
+   (page/include-css "/css/style.css")])
 
 (defn menu []
   ;; Menu!
@@ -53,6 +56,9 @@
       [:div [:p {:id "contact-response-message"}]]
       [:button {:type "submit"} "Send"]]]))
 
+(defn scripts []
+  [])
+
 (defn home-page []
 	(page/html5
    [:div {:id "app" :style "min-height: 2000px;"}
@@ -62,7 +68,9 @@
     (menu-button)
     (content)
     (animations)
-    (contact-form)]))
-
-(println (home-page))
+    (contact-form)]
+   [:script {:src "js/compiled/personal_site_clj.js"
+             :type "text/javascript"}]
+   [:script {:type "text/javascript"}
+    "personal_site_clj.system.go();"]))
 
