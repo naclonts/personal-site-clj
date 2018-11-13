@@ -144,7 +144,7 @@
 						(swap! old-positions assoc (:key tree) {:x x :y y})))))))
 
 
-(defn draw [state]
+(defn avl-draw [state]
 	; traverse & draw the tree
 	(when @dirty-state
 		(q/background (q/color 0 0 0 1))
@@ -152,12 +152,30 @@
 		(q/rotate (:rotation-angle state))
 		(draw-tree (:tree state) 0 0 (:progress-to-next-step state))))
 
-(q/defsketch fun-mode-times
+(def CANVAS-WIDTHS (- (.-innerWidth js/window) 25))
+
+(q/defsketch fun-mode-times-avl
 	:host "avl-canvas"
-	:size [(- (.-innerWidth js/window) 25) 750]
+	:size [CANVAS-WIDTHS 750]
 	:setup setup
-	:draw draw
+	:draw avl-draw
 	:update update-tree
 	:mouse-moved mouse-moved
 	:mouse-clicked mouse-clicked
 	:middleware [m/fun-mode])
+
+
+(defn cities-setup []
+  (q/background (q/color 0 30 70 100))
+  {})
+
+(defn cities-draw [state]
+  (q/background (q/color 0 30 70 100)))
+
+(q/defsketch cities-graph-sketch
+  :host "cities-graph-canvas"
+  :size [CANVAS-WIDTHS 750]
+  :setup cities-setup
+  :draw cities-draw
+  :middleware [m/fun-mode])
+

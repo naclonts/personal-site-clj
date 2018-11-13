@@ -11,6 +11,9 @@ body {
   color: rgb(255, 146, 44);
 }
 
+.section {
+	width: 100%;
+}
 .above-fold {
 	display: flex;
 	flex-direction: column;
@@ -26,10 +29,15 @@ body {
 	text-align: center;
 }
 canvas {
+	z-index: -100;
 	overflow: hidden;
 	cursor: pointer;
 }
 
+#cities-graph-canvas {
+	width: 100%;
+	position: absolute;
+}
 
 
 /*************************/
