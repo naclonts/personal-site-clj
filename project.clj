@@ -26,7 +26,7 @@
 								 [com.draines/postal "2.0.2"]]
 
 	:plugins [[lein-cljsbuild "1.1.7"]
-						[cider/cider-nrepl "0.15.1"]]
+						[cider/cider-nrepl "0.18.0"]]
 
   :min-lein-version "2.6.1"
 
