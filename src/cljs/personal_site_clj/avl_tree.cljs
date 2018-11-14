@@ -49,7 +49,7 @@
 			(avl-node key value (:right left) right))))
 
 (defn avl-node [key value left right]
-	(let [node (AvlTree. key value left right)]
+	(let [node (->AvlTree key value left right)]
 		(case (balance-factor node)
 			(:left-heavy :balanced :right-heavy)
 				node
