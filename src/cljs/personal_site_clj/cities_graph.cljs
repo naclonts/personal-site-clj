@@ -20,10 +20,13 @@
   (->Graph (assoc
             vertices
             key
-            (->Vertex key value [] :unexplored nil))))
+            (->Vertex key value #{} :undiscovered nil))))
 
 (defn get-vertex [key {:keys [vertices] :as graph}]
   (get vertices key))
+
+(defn connected? [f t]
+  (contains? (:connections f) (:key t)))
 
 (defn add-connection
   "Returns vertex f, now connected to vertex t."
@@ -41,14 +44,20 @@
 (defn print-graph [{:keys [vertices] :as g}]
   (println "Graph:")
   (doseq [v (map val vertices)]
-    (println (str (:key v) ": " (:connections v)))))
+    (println (str
+              (:key v)
+              "\t\t- conn: " (:connections v)
+              "\t\t- state: " (:state v)
+              "\t\t- parent: " (:parent v)))))
 
 
 (defn cities-setup []
   (q/background (q/color 0 30 70 100))
   (as-> (->Graph {}) g
     (add-vertex "hi" 42 (add-vertex "bye" 55 g))
+    (add-vertex "sup" 11 g)
     (add-edge (get-vertex "hi" g) (get-vertex "bye" g) g)
+    (add-edge (get-vertex "sup" g) (get-vertex "hi" g) g)
     (print-graph g)
     {:graph g}))
 
