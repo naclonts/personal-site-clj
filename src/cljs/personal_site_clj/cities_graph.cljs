@@ -5,7 +5,14 @@
 
 ; Graph structure implementation
 (defrecord Graph [vertices])
-(defrecord Vertex [key value connections state parent])
+(defrecord Vertex
+    ;; "Vertex structure:
+		;; 	- key : unique string
+		;; 	- value : payload
+		;; 	- connections : vector of keys to connected vertices
+		;; 	- state : search state keyword
+		;; 	- parent : key of parent vertex"
+    [key value connections state parent])
 
 (defn add-vertex
   "Add a new vertex with the given key/value to a graph."
@@ -21,20 +28,29 @@
 (defn add-connection
   "Returns vertex f, now connected to vertex t."
   [f t]
-  (assoc f :connections (conj (f :connections) t)))
+  (assoc f :connections (conj (:connections f) (:key t))))
 
 (defn add-edge
   "Create an undirected edge between vertices f and t."
-  [f t [{:keys [vertices] :as graph}]]
+  [f t {:keys [vertices] :as graph}]
   (->Graph
    (-> vertices
-       (assoc (:key t) (add-neighbor t f))
-       (assoc (:key f) (add-neighbor f t)))))
+       (assoc (:key t) (add-connection t f))
+       (assoc (:key f) (add-connection f t)))))
+
+(defn print-graph [{:keys [vertices] :as g}]
+  (println "Graph:")
+  (doseq [v (map val vertices)]
+    (println (str (:key v) ": " (:connections v)))))
+
 
 (defn cities-setup []
   (q/background (q/color 0 30 70 100))
-  (println (add-vertex "hi" 42 (add-vertex "bye" 55 (->Graph {}))))
-  {})
+  (as-> (->Graph {}) g
+    (add-vertex "hi" 42 (add-vertex "bye" 55 g))
+    (add-edge (get-vertex "hi" g) (get-vertex "bye" g) g)
+    (print-graph g)
+    {:graph g}))
 
 (defn cities-draw [state]
   (q/background (q/color 0 30 70 100)))
