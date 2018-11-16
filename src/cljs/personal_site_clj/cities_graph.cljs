@@ -1,7 +1,10 @@
 (ns personal-site-clj.cities-graph
   (:require [quil.core :as q :include-macros true]
             [quil.middleware :as m]
-            [ajax.core :refer [GET]]))
+            [ajax.core :refer [GET]]
+            [cljs.core.async
+             :as async
+             :refer [>! <! go chan]]))
 
 ; Graph structure implementation
 (defrecord Graph [vertices])
@@ -41,25 +44,38 @@
        (assoc (:key t) (add-connection t f))
        (assoc (:key f) (add-connection f t)))))
 
-(defn print-graph [{:keys [vertices] :as g}]
-  (println "Graph:")
-  (doseq [v (map val vertices)]
-    (println (str
+(defn print-vertex [v]
+  (println (str
               (:key v)
               "\t\t- conn: " (:connections v)
               "\t\t- state: " (:state v)
-              "\t\t- parent: " (:parent v)))))
+              "\t\t- parent: " (:parent v))))
+
+(defn print-graph [{:keys [vertices] :as g}]
+  (println "Graph:")
+  (doseq [v (map val vertices)]
+    (print-vertex v)))
+
+(defn traverse [{:keys [vertices] :as g}]
+  (let [out (chan)]
+    (doseq [v (map val vertices)]
+      (go (>! out v)))
+    out))
 
 
 (defn cities-setup []
   (q/background (q/color 0 30 70 100))
+  (q/frame-rate 1)
   (as-> (->Graph {}) g
     (add-vertex "hi" 42 (add-vertex "bye" 55 g))
     (add-vertex "sup" 11 g)
     (add-edge (get-vertex "hi" g) (get-vertex "bye" g) g)
     (add-edge (get-vertex "sup" g) (get-vertex "hi" g) g)
-    (print-graph g)
-    {:graph g}))
+    {:graph g :vertex-explorer (traverse g)}))
+
+(defn cities-update [{:keys [graph vertex-explorer] :as state}]
+  (go (print-vertex (<! vertex-explorer)))
+  state)
 
 (defn cities-draw [state]
   (q/background (q/color 0 30 70 100)))
@@ -70,6 +86,7 @@
   :host "cities-graph-canvas"
   :size [CANVAS-WIDTHS 750]
   :setup cities-setup
+  :update cities-update
   :draw cities-draw
   :middleware [m/fun-mode])
 

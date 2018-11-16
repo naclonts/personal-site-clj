@@ -31,8 +31,8 @@
 
 ; flag to determine if things need to be redrawn in this frame
 (def dirty-state (atom true))
-
-; stores last :x :y positions of nodes, to help smoothly animate to new positions
+; Stores last :x :y positions of nodes, to help smoothly animate to
+; new positions.
 ; format:
 ;		{ <node-key-0> {:x 42, :y 42},
 ;			<node-key-1> {:x 21  :y 84},
