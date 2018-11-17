@@ -76,13 +76,12 @@
       (go (>! out v)))
     out))
 
-
+(def initial-data (atom {}))
 (defn cities-setup []
   (q/background (q/color 0 30 70 100))
   (q/frame-rate 1)
-  (go
-    (log "about to fetch cities...")
-    (println (<! (get-cities-data))))
+  (log "past Go")
+  (println @initial-data)
   (as-> (->Graph {}) g
     (add-vertex "hi" 42 (add-vertex "bye" 55 g))
     (add-vertex "sup" 11 g)
@@ -99,11 +98,16 @@
 
 (def CANVAS-WIDTHS (- (.-innerWidth js/window) 25))
 
-(q/defsketch cities-graph-sketch
-  :host "cities-graph-canvas"
-  :size [CANVAS-WIDTHS 750]
-  :setup cities-setup
-  :update cities-update
-  :draw cities-draw
-  :middleware [m/fun-mode])
+(defn start [data]
+  (log "startings...")
+  (swap! initial-data (constantly data))
+  (q/defsketch cities-graph-sketch
+    :host "cities-graph-canvas"
+    :size [CANVAS-WIDTHS 750]
+    :setup cities-setup
+    :update cities-update
+    :draw cities-draw
+    :middleware [m/fun-mode]))
+
+(go (start (<! (get-cities-data))))
 

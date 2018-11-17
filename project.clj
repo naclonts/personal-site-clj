@@ -7,6 +7,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
 								 [org.clojure/clojurescript "1.10.238" :scope "provided"]
 								 [org.clojure/tools.nrepl "0.2.12"]
+                 [org.clojure/core.async "0.4.474"]
 								 [com.cognitect/transit-clj "0.8.309"]
 								 [cljfmt "0.5.7"]
                  [ring "1.6.3"]
@@ -107,7 +108,7 @@
   :profiles {:dev
              {:dependencies [[figwheel "0.5.15"]
                              [figwheel-sidecar "0.5.15"]
-                             [com.cemerick/piggieback "0.2.2"]
+                             [cider/piggieback "0.3.10"]
                              [org.clojure/tools.nrepl "0.2.13"]
                              [lein-doo "0.1.10"]
                              [reloaded.repl "0.2.4"]]
@@ -116,7 +117,7 @@
                         [lein-doo "0.1.10"]]
 
               :source-paths ["dev"]
-              :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
+              :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}}
 
              :uberjar
              {:source-paths ^:replace ["src/clj" "src/cljc"]
