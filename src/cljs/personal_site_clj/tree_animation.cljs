@@ -1,8 +1,7 @@
 (ns personal-site-clj.tree-animation
 	(:require [quil.core :as q :include-macros true]
 						[quil.middleware :as m]
-						[personal-site-clj.avl-tree :as avl]
-            [personal-site-clj.cities-graph :as cities]))
+						[personal-site-clj.avl-tree :as avl]))
 
 
 ;	;	;	;	;	;	;	;	;	;	;

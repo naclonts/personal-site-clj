@@ -4,7 +4,21 @@
             [ajax.core :refer [GET]]
             [cljs.core.async
              :as async
-             :refer [>! <! go chan]]))
+             :refer [>! <! go chan close!]]))
+
+(defn log [x]
+  (.log js/console x))
+
+(defn get-cities-data []
+  "Returns array of city data map objects."
+  (let [out (chan)]
+    (let [handler
+          (fn [res] (go (log res) (>! out res) (close! out)))]
+      (GET "/json/cities_partial.json"
+           {:handler handler
+            :response-format :json
+            :keywords? true}))
+    out))
 
 ; Graph structure implementation
 (defrecord Graph [vertices])
@@ -66,6 +80,9 @@
 (defn cities-setup []
   (q/background (q/color 0 30 70 100))
   (q/frame-rate 1)
+  (go
+    (log "about to fetch cities...")
+    (println (<! (get-cities-data))))
   (as-> (->Graph {}) g
     (add-vertex "hi" 42 (add-vertex "bye" 55 g))
     (add-vertex "sup" 11 g)
