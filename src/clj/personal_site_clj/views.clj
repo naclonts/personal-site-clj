@@ -2,7 +2,8 @@
   (:require [clojure.string :as str]
             [hiccup.page :as page]
 						[ring.util.anti-forgery :as util]
-						[markdown.core :refer [md-to-html-string]]))
+						[markdown.core :refer [md-to-html-string]]
+            [clojure.string :refer [capitalize]]))
 
 (defn page-head [title]
 	[:head
@@ -31,28 +32,29 @@
 (defn content []
   [:div.section
    [:canvas#cities-graph-canvas {:width "100%"}]
-   [:div {:class "above-fold"}
+   ;; Intro stuff
+   [:div.above-fold
     [:div {:class "eight columns offset-by-two"}
      [:h3 {:id "typing-intro"} "&nbsp;"
       [:noscript "Build Your Bridges"]]
      [:p "I'm a full stack web developer in Fort Collins, Colorado."]]]])
 
-(defn animations []
-  [:canvas {:width "100%" :id "avl-canvas"}])
+(defn avl-section []
+  [:div.section
+   [:canvas {:width "100%" :id "avl-canvas"}]])
 
 (defn contact-form []
   (let [gen-field (fn [name id type el-type]
                    [:div
-                    [:label {:for name}]
+                    [:label {:for name} (capitalize name)]
                     [el-type {:type type
                               :id id
                               :name name
                               :class "twelve columns"
                               :required true}]])]
-    [:div {:id "contact"}
-     [:form {:id "contact-form" :action "/contact-form" :method "post"
-             :class "six columns offset-by-two"}
-      [:h5 "Let’s Talk"]
+    [:div#contact.six.columns.offset-by-two
+     [:h5 "Let’s Talk"]
+     [:form#contact-form {:action "/contact-form" :method "post"}
       (gen-field "name" "name" "text" :input)
       (gen-field "email" "email" "email" :input)
       (gen-field "message" "message" "text" :textarea)
@@ -70,7 +72,7 @@
 		(menu)
     (menu-button)
     (content)
-    (animations)
+    (avl-section)
     (contact-form)]
    [:script {:src "js/compiled/personal_site_clj.js"
              :type "text/javascript"}]

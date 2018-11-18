@@ -7,7 +7,10 @@
 ;	;	;	;	;	;	;	;	;	;	;
 ; Animations & drawings
 ;	;	;	;	;	;	;	;	;	;	;	;	;
-;
+                                        ;
+(def CANVAS-WIDTHS
+  (min (- (.-innerWidth js/window) 25)
+       500))
 
 (defn mostly-inside-window? [element-id]
 	"Check if over 50% of element is within the viewport (vertically)."
@@ -22,7 +25,7 @@
 (def UPDATE-TREE-PERIOD (* 2 FRAME-RATE))
 (def PROGRESS-INCREMENT (/ 0.5 FRAME-RATE))
 (def tree-settings
-	{:x-spread 200
+	{:x-spread (/ CANVAS-WIDTHS 3)
 	 :node-r 20
 	 :level-height 100})
 
@@ -48,12 +51,12 @@
 		(q/background (q/color 0 0 0 1))
 		(q/color-mode :hsb 360 100 100)
 		(q/stroke 177 99 99)
-		(q/stroke-weight 6)
+		(q/stroke-weight 3)
 		(let [tree (avl/map->avl
                 (into {} (map vector (range 0 1) (repeat 1 nil))))]
 			; initial state
-			{:x 400
-			 :y 300
+			{:x (+ (:x-spread tree-settings) 25)
+			 :y 50
 			 :tree tree
 			 :rotation-angle 0
 			 :progress-to-next-step 0
@@ -61,18 +64,18 @@
 			 :frames-to-next-update UPDATE-TREE-PERIOD
 			 :max-node-count 15})))
 
-(defn mouse-moved [state event]
-	"Save angle between base of tree and mouse."
-	(let [dy (- (:y state) (:y event))
-				dx (- (:x state) (:x event))]
-		(swap! dirty-state (constantly true))
-		(assoc state :rotation-angle
-           (+ (Math/atan2 dy dx) (/ Math/PI 2)))))
+;; (defn mouse-moved [state event]
+;; 	"Save angle between base of tree and mouse."
+;; 	(let [dy (- (:y state) (:y event))
+;; 				dx (- (:x state) (:x event))]
+;; 		(swap! dirty-state (constantly true))
+;; 		(assoc state :rotation-angle
+;;            (+ (Math/atan2 dy dx) (/ Math/PI 2)))))
 
-(defn mouse-clicked [state event]
-	"Increase number of nodes displayed."
-	(-> state
-		(assoc :max-node-count (inc (:max-node-count state)))))
+;; (defn mouse-clicked [state event]
+;; 	"Increase number of nodes displayed."
+;; 	(-> state
+;; 		(assoc :max-node-count (inc (:max-node-count state)))))
 
 (defn update-tree [{tree :tree, frames :frames-to-next-update,
 										max-nodes :max-node-count :as state}]
@@ -160,14 +163,10 @@
 		(q/rotate (:rotation-angle state))
 		(draw-tree (:tree state) 0 0 (:progress-to-next-step state))))
 
-(def CANVAS-WIDTHS (- (.-innerWidth js/window) 25))
-
 (q/defsketch fun-mode-times-avl
 	:host "avl-canvas"
-	:size [CANVAS-WIDTHS 750]
+	:size [CANVAS-WIDTHS 500]
 	:setup setup
 	:draw avl-draw
 	:update update-tree
-	:mouse-moved mouse-moved
-	:mouse-clicked mouse-clicked
 	:middleware [m/fun-mode])

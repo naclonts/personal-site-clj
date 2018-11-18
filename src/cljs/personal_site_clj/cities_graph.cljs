@@ -205,24 +205,24 @@
     (let [curtain (q/lerp-color
                    (palette :bg) (palette :bg-transparent)
                    (:curtain-progress state))]
-      (println (:curtain-progress state))
       (q/stroke (q/color 0 0 0 1))
       (q/fill curtain)
       (q/rect 0 0 (q/width) (q/height)))))
 
-(def CANVAS-WIDTHS (- (.-innerWidth js/window) 25))
+(def CANVAS-WIDTH (- (.-innerWidth js/window) 25))
 
 (defn start [data]
   (log "startings...")
   (swap! initial-data (constantly data))
   (q/defsketch cities-graph-sketch
     :host "cities-graph-canvas"
-    :size [CANVAS-WIDTHS 750]
+    :size [CANVAS-WIDTH 750]
     :setup cities-setup
     :update cities-update
     :draw cities-draw
     :middleware [m/fun-mode]))
 
 ;; Start the sketch once the JSON is loaded in
-(go (start (<! (get-cities-data))))
+(if (> CANVAS-WIDTH 600)
+  (go (start (<! (get-cities-data)))))
 
