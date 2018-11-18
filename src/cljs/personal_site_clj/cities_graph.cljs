@@ -96,19 +96,47 @@
 
 (def initial-data (atom {}))
 (defn cities-setup []
-  (q/background (q/color 0 30 70 100))
+  (q/background (q/color 10 80 70 100))
   (q/frame-rate 1)
   (let [g (build-cities-graph @initial-data)]
     (println "graph built:")
     (println g)
     {:graph g :vertex-explorer (traverse g)}))
 
+(defn translate
+  [value start-min start-max end-min end-max]
+  (+ (* (/ (- value start-min) (- start-max start-min))
+        (- end-max end-min))
+     end-min))
+
+
+(def MIN-LON -130)
+(def MAX-LON -70)
+(def MIN-LAT 50)
+(def MAX-LAT 25)
+(defn point-to-coords
+  [lat lon]
+  (println (str "lat " lat " lon " lon))
+  [(translate lon MIN-LON MAX-LON 0 (q/width))
+   (translate lat MIN-LAT MAX-LAT 0 (q/height))])
+
+(defn draw-city!
+  [city]
+  (println city)
+  (let [[x y] (point-to-coords (:latitude city) (:longitude city))]
+    (q/stroke 200)
+    (println (str "x " x "  y " y))
+    (q/ellipse x y 10 10)))
+
+(def next-draw-city (atom {}))
+
 (defn cities-update [{:keys [graph vertex-explorer] :as state}]
-  (go (G/print-vertex (<! vertex-explorer)))
+  (go (let [v (<! vertex-explorer)]
+        (swap! next-draw-city (fn [] (get v :value)))))
   state)
 
 (defn cities-draw [state]
-  (q/background (q/color 0 30 70 100)))
+  (draw-city! @next-draw-city))
 
 (def CANVAS-WIDTHS (- (.-innerWidth js/window) 25))
 
