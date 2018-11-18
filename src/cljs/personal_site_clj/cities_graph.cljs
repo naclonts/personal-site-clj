@@ -50,11 +50,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Application logic
-(defn traverse [{:keys [vertices] :as g}]
-  (let [out (chan)]
-    (doseq [v (map val vertices)]
-      (go (>! out v)))
-    (async/take (count vertices) out)))
 
 (defn connect-cities?
   [city1 city2]
@@ -99,7 +94,7 @@
   (q/background (q/color 10 80 70 0))
   (q/frame-rate 1)
   (let [g (build-cities-graph @initial-data)]
-    {:graph g :vertex-explorer (traverse g)}))
+    {:graph g :vertex-explorer (G/bfs (G/get-vertex "Seattle" g) g)}))
 
 (defn translate
   [value start-min start-max end-min end-max]
@@ -108,8 +103,8 @@
      end-min))
 
 
-(def MIN-LON -130)
-(def MAX-LON -70)
+(def MIN-LON -125)
+(def MAX-LON -68)
 (def MIN-LAT 50)
 (def MAX-LAT 25)
 (defn point-to-coords
