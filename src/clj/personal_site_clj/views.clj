@@ -52,6 +52,7 @@
     [:div {:id "contact"}
      [:form {:id "contact-form" :action "/contact-form" :method "post"
              :class "six columns offset-by-two"}
+      [:h5 "Let’s Talk"]
       (gen-field "name" "name" "text" :input)
       (gen-field "email" "email" "email" :input)
       (gen-field "message" "message" "text" :textarea)
