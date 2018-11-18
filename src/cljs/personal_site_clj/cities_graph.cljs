@@ -59,21 +59,19 @@
   "Adds a city to `g` as a vertex, including creating connections
   to neighbors."
   [city {:keys [vertices] :as graph}]
-  (println (str "city = " city))
   (let [g (G/add-vertex (:city city) city graph)
         v (G/get-vertex (:city city) g)
         vertex-list (into () (seq vertices))]
-    (loop [existing-vertices (rest vertex-list)
-           [key u] (peek vertex-list)
+    (loop [[[key u] & existing-vertices] vertex-list
            new-graph g]
       (if (nil? u)
         new-graph
         (if (connect-cities? city (:value u))
           (recur
-           (rest existing-vertices) (peek existing-vertices)
+           existing-vertices
            (G/add-edge v u new-graph))
           (recur
-           (rest existing-vertices) (peek existing-vertices)
+           existing-vertices
            new-graph))))))
 
 (defn build-cities-graph

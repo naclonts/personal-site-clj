@@ -76,8 +76,6 @@
               neighbors (map
                          (fn [key] (get-vertex key graph))
                          (:connections v))]
-          (println "in loop")
-          (println v)
           (go (>! out v))
           (recur
            (conj vertices v)
