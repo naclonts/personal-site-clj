@@ -4,7 +4,9 @@
             [ajax.core :refer [GET]]
             [cljs.core.async
              :as async
-             :refer [>! <! go chan close!]]))
+             :refer [>! <! go chan close!]]
+            ;; Graph data type implementation
+            [personal-site-clj.graph :as G]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -47,57 +49,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Graph structure implementation
-(defrecord Graph [vertices])
-(defrecord Vertex
-    ;; Vertex structure:
-		;; 	- key : unique string
-		;; 	- value : payload
-		;; 	- connections : set of keys to connected vertices
-		;; 	- state : search state (undiscovered, discovered,
-    ;;            or completely-explored)
-		;; 	- parent : key of parent vertex
-    [key value connections state parent])
-
-(defn add-vertex
-  "Add a new vertex with the given key/value to a graph."
-  [key value {:keys [vertices] :as graph}]
-  (->Graph (assoc
-            vertices
-            key
-            (->Vertex key value #{} :undiscovered nil))))
-
-(defn get-vertex [key {:keys [vertices] :as graph}]
-  (get vertices key))
-
-(defn connected? [f t]
-  (contains? (:connections f) (:key t)))
-
-(defn add-connection
-  "Returns vertex f, now connected to vertex t."
-  [f t]
-  (assoc f :connections (conj (:connections f) (:key t))))
-
-(defn add-edge
-  "Create an undirected edge between vertices f and t."
-  [f t {:keys [vertices] :as graph}]
-  (->Graph
-   (-> vertices
-       (assoc (:key t) (add-connection t f))
-       (assoc (:key f) (add-connection f t)))))
-
-(defn print-vertex [v]
-  (println (str
-              (:key v)
-              "\t\t- conn: " (:connections v)
-              "\t\t- state: " (:state v)
-              "\t\t- parent: " (:parent v))))
-
-(defn print-graph [{:keys [vertices] :as g}]
-  (println "Graph:")
-  (doseq [v (map val vertices)]
-    (print-vertex v)))
-
+;; Application logic
 (defn traverse [{:keys [vertices] :as g}]
   (let [out (chan)]
     (doseq [v (map val vertices)]
@@ -113,8 +65,8 @@
   to neighbors."
   [city {:keys [vertices] :as graph}]
   (println (str "city = " city))
-  (let [g (add-vertex (:city city) city graph)
-        v (get-vertex (:city city) g)
+  (let [g (G/add-vertex (:city city) city graph)
+        v (G/get-vertex (:city city) g)
         vertex-list (into () (seq vertices))]
     (loop [existing-vertices (rest vertex-list)
            [key u] (peek vertex-list)
@@ -124,7 +76,7 @@
         (if (connect-cities? city (:value u))
           (recur
            (rest existing-vertices) (peek existing-vertices)
-           (add-edge v u new-graph))
+           (G/add-edge v u new-graph))
           (recur
            (rest existing-vertices) (peek existing-vertices)
            new-graph))))))
@@ -133,7 +85,7 @@
   "Transforms the vector of cities data into a graph."
   [data]
   (println data)
-  (loop [graph (->Graph {})
+  (loop [graph (G/->Graph {})
          data (into () data)]
     (let [city (peek data)]
       (if (nil? city)
@@ -152,7 +104,7 @@
     {:graph g :vertex-explorer (traverse g)}))
 
 (defn cities-update [{:keys [graph vertex-explorer] :as state}]
-  (go (print-vertex (<! vertex-explorer)))
+  (go (G/print-vertex (<! vertex-explorer)))
   state)
 
 (defn cities-draw [state]

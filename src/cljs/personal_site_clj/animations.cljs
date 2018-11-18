@@ -7,9 +7,3 @@
 ;; Animation code is in the tree-animation and cities-graph
 ;; namespaces, which are triggered by requiring above.
 
-(println "Hello 42")
-; @TODO import json data and draw it. Check out:
-; https://github.com/JulianBirch/cljs-ajax
-
-
-
