@@ -34,7 +34,7 @@
    [:div {:class "above-fold"}
     [:div {:class "eight columns offset-by-two"}
      [:h3 {:id "typing-intro"} "&nbsp;"
-      [:noscript "Develop The Web"]]
+      [:noscript "Build Your Bridges"]]
      [:p "I'm a full stack web developer in Fort Collins, Colorado."]]]])
 
 (defn animations []

@@ -10,7 +10,7 @@
 	(-seq [array] (array-seq array 0)))
 
 ; Intro / above fold stuff
-(def intro-text "Develop The Web")
+  (def intro-text "Build Your Bridges")
 (defn type-name [text]
 	(let [el (.getElementById js/document "typing-intro")
 				new-char (subs text 0 1)]

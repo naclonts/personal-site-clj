@@ -52,7 +52,7 @@
   (case color-symbol
     :bg (q/color 0 0 13)
     :bg-transparent (q/color 0 0 13 1)
-    :light-gray (q/color 0 0 67)
+    :light-gray (q/color 0 0 60)
     :orange (q/color 29 100 100)
     :wispy-gray (q/color 0 0 67 50)))
 
