@@ -24,7 +24,8 @@
 								 [cljs-ajax "0.7.5"]
 								 [hiccup "1.0.5"]
 								 [markdown-clj "1.0.5"]
-								 [com.draines/postal "2.0.2"]]
+								 [com.draines/postal "2.0.2"]
+                 [binaryage/devtools "0.9.10"]]
 
 	:plugins [[lein-cljsbuild "1.1.7"]
 						[cider/cider-nrepl "0.18.0"]]

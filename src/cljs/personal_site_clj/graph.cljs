@@ -63,8 +63,8 @@
     (async/take (count vertices) out)))
 
 (defn bfs
-  "Returns a channel that emits vertices as they are discovered in
-  a Breadth First Search."
+  "Returns a channel that emits vertices in the order they are
+  discovered in a Breadth First Search."
   [start graph]
   (let [out (chan)]
     (loop [vertices []

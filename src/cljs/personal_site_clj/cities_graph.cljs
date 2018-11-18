@@ -111,22 +111,30 @@
    (translate lat MIN-LAT MAX-LAT 0 (q/height))])
 
 (defn draw-city!
-  [city]
-  (let [[x y] (point-to-coords (:latitude city) (:longitude city))]
-    (q/stroke 200)
-    (q/fill (q/color 0 0 0 1))
-    (q/ellipse x y 20 20)))
+  ([city] (draw-city! city (q/color 200 200 200)))
+  ([city color]
+   (let [[x y] (point-to-coords (:latitude city) (:longitude city))]
+     (q/stroke color)
+     (q/fill (q/color 0 0 0 1))
+     (q/ellipse x y 20 20))))
+
+(defn draw-cities!
+  [graph]
+  (doseq [v (:vertices graph)]
+    (draw-city! (:value (val v)))))
 
 (def next-draw-city (atom {}))
 
 (defn cities-update [{:keys [graph vertex-explorer] :as state}]
   (go (let [v (<! vertex-explorer)]
-        (swap! next-draw-city (fn [] (get v :value)))))
+      (swap! next-draw-city (fn [] (get v :value)))))
   state)
 
 (defn cities-draw [state]
+  (q/background (q/color 0 0 0 1))
+  (draw-cities! (:graph state))
   (if (not (nil? @next-draw-city))
-    (draw-city! @next-draw-city)))
+    (draw-city! @next-draw-city (q/color 255 146 44))))
 
 (def CANVAS-WIDTHS (- (.-innerWidth js/window) 25))
 
