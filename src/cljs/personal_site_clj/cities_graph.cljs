@@ -54,7 +54,7 @@
   (let [out (chan)]
     (doseq [v (map val vertices)]
       (go (>! out v)))
-    out))
+    (async/take (count vertices) out)))
 
 (defn connect-cities?
   [city1 city2]
@@ -96,11 +96,9 @@
 
 (def initial-data (atom {}))
 (defn cities-setup []
-  (q/background (q/color 10 80 70 100))
+  (q/background (q/color 10 80 70 0))
   (q/frame-rate 1)
   (let [g (build-cities-graph @initial-data)]
-    (println "graph built:")
-    (println g)
     {:graph g :vertex-explorer (traverse g)}))
 
 (defn translate
@@ -116,17 +114,15 @@
 (def MAX-LAT 25)
 (defn point-to-coords
   [lat lon]
-  (println (str "lat " lat " lon " lon))
   [(translate lon MIN-LON MAX-LON 0 (q/width))
    (translate lat MIN-LAT MAX-LAT 0 (q/height))])
 
 (defn draw-city!
   [city]
-  (println city)
   (let [[x y] (point-to-coords (:latitude city) (:longitude city))]
     (q/stroke 200)
-    (println (str "x " x "  y " y))
-    (q/ellipse x y 10 10)))
+    (q/fill (q/color 0 0 0 1))
+    (q/ellipse x y 20 20)))
 
 (def next-draw-city (atom {}))
 
@@ -136,7 +132,8 @@
   state)
 
 (defn cities-draw [state]
-  (draw-city! @next-draw-city))
+  (if (not (nil? @next-draw-city))
+    (draw-city! @next-draw-city)))
 
 (def CANVAS-WIDTHS (- (.-innerWidth js/window) 25))
 
