@@ -184,7 +184,9 @@
   [connections]
   (let [increase-progress
         (fn [c] (assoc c :progress (+ (:progress c) 0.05)))]
-    (map increase-progress connections)))
+    (as-> connections cs
+      (filterv #(< (:progress %1) 1) cs)
+      (map increase-progress cs))))
 
 (defn cities-update
   [{:keys [graph vertex-explorer
@@ -194,13 +196,13 @@
     (if (> (:explore-iter-progress state) 1)
       (do
         ;; TODO: why do unconnected vertices get connections?
-        (go (let [v (<! vertex-explorer)
-                  origin @vertex-highlighted]
+        (go (let [v (<! vertex-explorer)]
               (when (not (nil? v))
-                (swap! vertex-highlighted (constantly v))
+                (swap! vertex-highlighted
+                       (fn [] (G/get-vertex (:parent v) graph)))
                 (when (not (nil? (:parent v)))
                   (swap! highlighted-connections
-                         conj {:from (:parent v )
+                         conj {:from (:parent v)
                                :to   (:key v)
                                :progress 0})
 ;;                  (println "Line from " (:parent v) " to " (:key v))
@@ -237,7 +239,9 @@
           (draw-line-between-cities!
            (get-city (:from conn))
            (get-city (:to conn))
-           (palette :orange)))))
+           (q/lerp-color
+            (palette :orange) (palette :wispy-gray)
+            (:progress conn))))))
     ;; Draw gradient curtain
     :curtain
     (let [curtain (q/lerp-color
