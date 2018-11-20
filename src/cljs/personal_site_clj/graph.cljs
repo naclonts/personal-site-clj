@@ -67,18 +67,23 @@
   discovered in a Breadth First Search."
   [start graph]
   (let [out (chan)]
-    (loop [vertices []
+    (loop [vertices {}
            explored #{start}
            frontier #queue [start]]
       (if (empty? frontier)
-        (async/take (count vertices) out)
+        ;; Once we're done, return the updated graph and channel
+        [(assoc graph :vertices vertices)
+         out]
+        ;; Continue
         (let [v (peek frontier)
               neighbors (map
-                         (fn [key] (get-vertex key graph))
+                         (fn [key]
+                           (assoc (get-vertex key graph)
+                                  :parent (:key v)))
                          (:connections v))]
           (go (>! out v))
           (recur
-           (conj vertices v)
+           (assoc vertices (:key v) v)
            (into explored neighbors)
            (into (pop frontier) (remove explored neighbors))))))))
 

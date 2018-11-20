@@ -126,9 +126,10 @@
   (q/color-mode :hsb 360 100 100)
   (q/background (q/color 0 0 0 1))
   (q/frame-rate 30)
-  (let [g (build-cities-graph @initial-data)]
-    {:graph g
-     :vertex-explorer (G/bfs (G/get-vertex "Seattle" g) g)
+  (let [g (build-cities-graph @initial-data)
+        [graph explorer] (G/bfs (G/get-vertex "Seattle" g) g)]
+    {:graph graph
+     :vertex-explorer explorer
      :curtain-progress 0
      :explore-iter-progress 0
      :stage :curtain}))
@@ -188,23 +189,25 @@
 (defn cities-update
   [{:keys [graph vertex-explorer
            explore-iter-progress curtain-progress stage] :as state}]
-  (case stage
+   (case stage
     :explore
     (if (> (:explore-iter-progress state) 1)
       (do
+        ;; TODO: why do unconnected vertices get connections?
         (go (let [v (<! vertex-explorer)
                   origin @vertex-highlighted]
-              (if (and (not (nil? v)) (not (G/connected? v origin)))
-                (swap! vertex-highlighted (constantly v)))
-              (if (not (nil? origin))
-                (swap! highlighted-connections
-                       conj {:from (:key origin)
-                             :to   (:key v)
-                             :progress 0}))))
+              (when (not (nil? v))
+                (swap! vertex-highlighted (constantly v))
+                (when (not (nil? (:parent v)))
+                  (swap! highlighted-connections
+                         conj {:from (:parent v )
+                               :to   (:key v)
+                               :progress 0})
+;;                  (println "Line from " (:parent v) " to " (:key v))
+                  ))))
         (assoc state :explore-iter-progress 0))
       (do
         (swap! highlighted-connections update-connections)
-        ;;(println @highlighted-connections)
         (assoc state
                :explore-iter-progress
                (+ explore-iter-progress explore-iter-inc))))
