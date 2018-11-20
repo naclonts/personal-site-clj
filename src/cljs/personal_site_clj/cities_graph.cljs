@@ -101,9 +101,18 @@
 (def FRAME-RATE 30)
 (def curtain-time 2)
 (def curtain-inc (/ 1 (* curtain-time FRAME-RATE)))
-(def explore-time-per-iter 0.5)
+(def explore-time-per-iter 0.25)
 (def frames-per-explore (* explore-time-per-iter FRAME-RATE))
 (def explore-iter-inc (/ 1 (* explore-time-per-iter FRAME-RATE)))
+
+;; Data structures
+""
+(def vertex-highlighted (atom nil))
+"Connections in form [{:from <key of vertex from>
+                       :to   <key of destination vertex>
+                       :progress <float>}
+                      {...} ... ]"
+(def highlighted-connections (atom []))
 
 (defn next-stage
   "Based on the current sketch stage, return the next one."
@@ -152,13 +161,16 @@
 
 
 (defn draw-line-between-cities!
-  [city1 city2]
-  (let [[x1 y1]
-        (point-to-coords (:latitude city1) (:longitude city1))
-        [x2 y2]
-        (point-to-coords (:latitude city2) (:longitude city2))]
-    (q/stroke (palette :wispy-gray))
-    (q/line x1 y1 x2 y2)))
+  "Connect two cities with a line, with color defaulting to gray."
+  ([city1 city2] (draw-line-between-cities!
+                  city1 city2 (palette :wispy-gray)))
+  ([city1 city2 color]
+   (let [[x1 y1]
+         (point-to-coords (:latitude city1) (:longitude city1))
+         [x2 y2]
+         (point-to-coords (:latitude city2) (:longitude city2))]
+     (q/stroke color)
+     (q/line x1 y1 x2 y2))))
 
 (defn draw-cities!
   [graph]
@@ -167,7 +179,11 @@
       (draw-line-between-cities! (:value v) (:value u)))
     (draw-city! (:value v))))
 
-(def next-draw-city (atom {}))
+(defn update-connections
+  [connections]
+  (let [increase-progress
+        (fn [c] (assoc c :progress (+ (:progress c) 0.05)))]
+    (map increase-progress connections)))
 
 (defn cities-update
   [{:keys [graph vertex-explorer
@@ -176,12 +192,22 @@
     :explore
     (if (> (:explore-iter-progress state) 1)
       (do
-        (go (let [v (<! vertex-explorer)]
-              (swap! next-draw-city (fn [] (get v :value)))))
+        (go (let [v (<! vertex-explorer)
+                  origin @vertex-highlighted]
+              (if (and (not (nil? v)) (not (G/connected? v origin)))
+                (swap! vertex-highlighted (constantly v)))
+              (if (not (nil? origin))
+                (swap! highlighted-connections
+                       conj {:from (:key origin)
+                             :to   (:key v)
+                             :progress 0}))))
         (assoc state :explore-iter-progress 0))
-      (assoc state
-             :explore-iter-progress
-             (+ explore-iter-progress explore-iter-inc)))
+      (do
+        (swap! highlighted-connections update-connections)
+        ;;(println @highlighted-connections)
+        (assoc state
+               :explore-iter-progress
+               (+ explore-iter-progress explore-iter-inc))))
     :curtain
     (as-> state s
       ;; increase the curtain's gradient progress
@@ -195,12 +221,21 @@
   [{:keys [stage graph] :as state}]
   (q/background (q/color 0 0 0 1))
   (draw-cities! graph)
+  ;; The drawing at this point depends on what stage we're in
   (case stage
     ;; Exploring along the BFS
     :explore
-    (if (not (nil? @next-draw-city))
-      (draw-city! @next-draw-city (palette :orange) 3))
-    ;; Draw gradient curtain (unless it's already been lifted)
+    (do
+      (println @vertex-highlighted)
+      (if (not (nil? @vertex-highlighted))
+        (draw-city! (:value @vertex-highlighted) (palette :orange) 3))
+      (doseq [conn @highlighted-connections]
+        (let [get-city (fn [key] (:value (G/get-vertex key graph)))]
+          (draw-line-between-cities!
+           (get-city (:from conn))
+           (get-city (:to conn))
+           (palette :orange)))))
+    ;; Draw gradient curtain
     :curtain
     (let [curtain (q/lerp-color
                    (palette :bg) (palette :bg-transparent)
@@ -222,7 +257,8 @@
     :draw cities-draw
     :middleware [m/fun-mode]))
 
-;; Start the sketch once the JSON is loaded in
-(if (> CANVAS-WIDTH 600)
+;; Start the sketch once the JSON is loaded in.
+;; Only displayed on somewhat wide screens.
+(if (> CANVAS-WIDTH 550)
   (go (start (<! (get-cities-data)))))
 
