@@ -62,28 +62,65 @@
       (go (>! out v)))
     (async/take (count vertices) out)))
 
+;; (defn bfs2
+;;   "Returns a channel that emits vertices in the order they are
+;;   discovered in a Breadth First Search."
+;;   [start graph]
+;;   (let [out (chan)]
+;;     (loop [vertices {}
+;;            explored #{start}
+;;            frontier #queue [start]]
+;;       (if (empty? frontier)
+;;         ;; Once we're done, return the updated graph and channel
+;;         [(assoc graph :vertices vertices)
+;;          out]
+;;         ;; Continue
+;;         (let [v (peek frontier)
+;;               neighbors (map
+;;                          (fn [key]
+;;                            (assoc (get-vertex key graph)
+;;                                   :parent (:key v)))
+;;                          (:connections v))]
+;;           (go (>! out v))
+;;           (recur
+;;            (assoc vertices (:key v) v)
+;;            (into explored neighbors)
+;;            (into (pop frontier) (remove explored neighbors))))))))
+
 (defn bfs
-  "Returns a channel that emits vertices in the order they are
-  discovered in a Breadth First Search."
   [start graph]
   (let [out (chan)]
-    (loop [vertices {}
-           explored #{start}
-           frontier #queue [start]]
-      (if (empty? frontier)
-        ;; Once we're done, return the updated graph and channel
-        [(assoc graph :vertices vertices)
-         out]
-        ;; Continue
-        (let [v (peek frontier)
-              neighbors (map
-                         (fn [key]
-                           (assoc (get-vertex key graph)
-                                  :parent (:key v)))
-                         (:connections v))]
-          (go (>! out v))
+    (println (get-vertex "Jacksonville" graph))
+    (loop [discovered #queue [start]
+           discovered-map {(:key start) true}
+           u start]
+  ;;    (println "discovered = ")
+;;      (println discovered)
+      (if (nil? u)
+        (do
+          (println "donezo!")
+          (println discovered)
+          [graph out])
+        (let [neighbor-keys
+              (filter #(not (contains? discovered-map %)) (:connections u))
+              neighbors
+              (map #(assoc (get-vertex % graph) :parent (:key u)) neighbor-keys)
+              new-discovered (as-> discovered ds
+                               (into #queue [] (concat ds neighbors)))]
+          ;; (println "-- bfs")
+          ;; (println "u:")
+          ;; (println u)
+          ;; (when (= (:key u) "Jacksonville") (js* "debugger;"))
+          ;; ;;(println "neighbors:")
+          ;; ;;(println neighbors)
+          (go (>! out u))
           (recur
-           (assoc vertices (:key v) v)
-           (into explored neighbors)
-           (into (pop frontier) (remove explored neighbors))))))))
+           ;; Record the neighbors as "discovered" and pop the first
+           (pop new-discovered)
+           ;; Record the discovered neighbors in a hash map, as well,
+           ;; for fast lookup
+           (into discovered-map
+                 (map #(hash-map % true) neighbor-keys))
+           ;; And move on to exploring the first discovered
+           (peek new-discovered)))))))
 

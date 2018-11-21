@@ -101,7 +101,7 @@
 (def FRAME-RATE 30)
 (def curtain-time 2)
 (def curtain-inc (/ 1 (* curtain-time FRAME-RATE)))
-(def explore-time-per-iter 0.25)
+(def explore-time-per-iter 0.1)
 (def frames-per-explore (* explore-time-per-iter FRAME-RATE))
 (def explore-iter-inc (/ 1 (* explore-time-per-iter FRAME-RATE)))
 
@@ -117,7 +117,6 @@
 (defn next-stage
   "Based on the current sketch stage, return the next one."
   [current-stage]
-  (println "stage " current-stage)
   (case current-stage
     :curtain :explore))
 
@@ -183,9 +182,9 @@
 (defn update-connections
   [connections]
   (let [increase-progress
-        (fn [c] (assoc c :progress (+ (:progress c) 0.05)))]
+        (fn [c] (assoc c :progress (+ (:progress c) 0.03)))]
     (as-> connections cs
-      (filterv #(< (:progress %1) 1) cs)
+      (filterv #(< (:progress %) 1) cs)
       (map increase-progress cs))))
 
 (defn cities-update
@@ -195,7 +194,6 @@
     :explore
     (if (> (:explore-iter-progress state) 1)
       (do
-        ;; TODO: why do unconnected vertices get connections?
         (go (let [v (<! vertex-explorer)]
               (when (not (nil? v))
                 (swap! vertex-highlighted
@@ -205,7 +203,7 @@
                          conj {:from (:parent v)
                                :to   (:key v)
                                :progress 0})
-;;                  (println "Line from " (:parent v) " to " (:key v))
+                  (println "Line from " (:parent v) " to " (:key v))
                   ))))
         (assoc state :explore-iter-progress 0))
       (do
@@ -231,7 +229,6 @@
     ;; Exploring along the BFS
     :explore
     (do
-      (println @vertex-highlighted)
       (if (not (nil? @vertex-highlighted))
         (draw-city! (:value @vertex-highlighted) (palette :orange) 3))
       (doseq [conn @highlighted-connections]
