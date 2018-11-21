@@ -104,6 +104,7 @@
 (def explore-time-per-iter 0.1)
 (def frames-per-explore (* explore-time-per-iter FRAME-RATE))
 (def explore-iter-inc (/ 1 (* explore-time-per-iter FRAME-RATE)))
+(def connection-iter-inc (/ 0.5 FRAME-RATE))
 
 ;; Data structures
 ""
@@ -183,7 +184,8 @@
 (defn update-connections
   [connections]
   (let [increase-progress
-        (fn [c] (assoc c :progress (+ (:progress c) 0.03)))]
+        (fn [c] (assoc c :progress
+                       (+ (:progress c) connection-iter-inc)))]
     (as-> connections cs
       (filterv #(< (:progress %) 1) cs)
       (map increase-progress cs))))

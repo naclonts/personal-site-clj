@@ -394,5 +394,132 @@
 		"population": "417650",
 		"rank": "44",
 		"state": "Florida"
+	},
+	{
+		"city": "Oakland",
+		"growth_from_2000_to_2013": "1.3%",
+		"latitude": 37.8043637,
+		"longitude": -122.2711137,
+		"population": "406253",
+		"rank": "45",
+		"state": "California"
+	},
+	{
+		"city": "Minneapolis",
+		"growth_from_2000_to_2013": "4.5%",
+		"latitude": 44.977753,
+		"longitude": -93.2650108,
+		"population": "400070",
+		"rank": "46",
+		"state": "Minnesota"
+	},
+	{
+		"city": "Tulsa",
+		"growth_from_2000_to_2013": "1.3%",
+		"latitude": 36.1539816,
+		"longitude": -95.99277500000001,
+		"population": "398121",
+		"rank": "47",
+		"state": "Oklahoma"
+	},
+	{
+		"city": "Cleveland",
+		"growth_from_2000_to_2013": "-18.1%",
+		"latitude": 41.49932,
+		"longitude": -81.6943605,
+		"population": "390113",
+		"rank": "48",
+		"state": "Ohio"
+	},
+	{
+		"city": "Wichita",
+		"growth_from_2000_to_2013": "9.7%",
+		"latitude": 37.688889,
+		"longitude": -97.336111,
+		"population": "386552",
+		"rank": "49",
+		"state": "Kansas"
+	},
+	{
+		"city": "Arlington",
+		"growth_from_2000_to_2013": "13.3%",
+		"latitude": 32.735687,
+		"longitude": -97.10806559999999,
+		"population": "379577",
+		"rank": "50",
+		"state": "Texas"
+	},
+	{
+		"city": "New Orleans",
+		"growth_from_2000_to_2013": "-21.6%",
+		"latitude": 29.95106579999999,
+		"longitude": -90.0715323,
+		"population": "378715",
+		"rank": "51",
+		"state": "Louisiana"
+	},
+	{
+		"city": "Fort Collins",
+		"growth_from_2000_to_2013": "26.6%",
+		"latitude": 40.5852602,
+		"longitude": -105.084423,
+		"population": "152061",
+		"rank": "160",
+		"state": "Colorado"
+	},
+	{
+		"city": "Billings",
+		"growth_from_2000_to_2013": "18.6%",
+		"latitude": 45.7832856,
+		"longitude": -108.5006904,
+		"population": "109059",
+		"rank": "256",
+		"state": "Montana"
+	},
+	{
+		"city": "Boise City",
+		"growth_from_2000_to_2013": "9.5%",
+		"latitude": 43.6187102,
+		"longitude": -116.2146068,
+		"population": "214237",
+		"rank": "98",
+		"state": "Idaho"
+	},
+	{
+		"city": "Salt Lake City",
+		"growth_from_2000_to_2013": "5.1%",
+		"latitude": 40.7607793,
+		"longitude": -111.8910474,
+		"population": "191180",
+		"rank": "124",
+		"state": "Utah"
+	},
+	{
+		"city": "Sioux Falls",
+		"growth_from_2000_to_2013": "31.1%",
+		"latitude": 43.5445959,
+		"longitude": -96.73110340000001,
+		"population": "164676",
+		"rank": "147",
+		"state": "South Dakota"
+	},
+	{
+		"city": "Laredo",
+		"growth_from_2000_to_2013": "38.2%",
+		"latitude": 27.5305671,
+		"longitude": -99.48032409999999,
+		"population": "248142",
+		"rank": "80",
+		"state": "Texas"
+	},
+	{
+		"city": "Tampa",
+		"growth_from_2000_to_2013": "16.0%",
+		"latitude": 27.950575,
+		"longitude": -82.4571776,
+		"population": "352957",
+		"rank": "53",
+		"state": "Florida"
 	}
+	
 ]
