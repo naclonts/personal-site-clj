@@ -52,9 +52,10 @@
   (case color-symbol
     :bg (q/color 0 0 13)
     :bg-transparent (q/color 0 0 13 1)
+    :blue (q/color 200 87 80)
     :light-gray (q/color 0 0 60)
     :orange (q/color 29 100 100)
-    :wispy-gray (q/color 0 0 67 50)))
+    :wispy-gray (q/color 180 0 67 50)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -68,8 +69,8 @@
   "Adds a city to `g` as a vertex, including creating connections
   to neighbors."
   [city {:keys [vertices] :as graph}]
-  (let [g (G/add-vertex (:city city) city graph)
-        v (G/get-vertex (:city city) g)
+  (let [v-key (:city city)
+        g (G/add-vertex v-key city graph)
         vertex-list (into () (seq vertices))]
     (loop [[[key u] & existing-vertices] vertex-list
            new-graph g]
@@ -78,7 +79,7 @@
         (if (connect-cities? city (:value u))
           (recur
            existing-vertices
-           (G/add-edge v u new-graph))
+           (G/add-edge (G/get-vertex v-key new-graph) u new-graph))
           (recur
            existing-vertices
            new-graph))))))
@@ -86,7 +87,6 @@
 (defn build-cities-graph
   "Transforms the vector of cities data into a graph."
   [data]
-  (println data)
   (loop [graph (G/->Graph {})
          data (into () data)]
     (let [city (peek data)]
@@ -169,6 +169,7 @@
          (point-to-coords (:latitude city1) (:longitude city1))
          [x2 y2]
          (point-to-coords (:latitude city2) (:longitude city2))]
+     (q/stroke-weight 1)
      (q/stroke color)
      (q/line x1 y1 x2 y2))))
 
@@ -230,14 +231,14 @@
     :explore
     (do
       (if (not (nil? @vertex-highlighted))
-        (draw-city! (:value @vertex-highlighted) (palette :orange) 3))
+        (draw-city! (:value @vertex-highlighted) (palette :blue) 1))
       (doseq [conn @highlighted-connections]
         (let [get-city (fn [key] (:value (G/get-vertex key graph)))]
           (draw-line-between-cities!
            (get-city (:from conn))
            (get-city (:to conn))
            (q/lerp-color
-            (palette :orange) (palette :wispy-gray)
+            (palette :blue) (palette :wispy-gray)
             (:progress conn))))))
     ;; Draw gradient curtain
     :curtain

@@ -109,7 +109,7 @@
   :profiles {:dev
              {:dependencies [[figwheel "0.5.15"]
                              [figwheel-sidecar "0.5.15"]
-                             [cider/piggieback "0.3.10"]
+                             [com.cemerick/piggieback "0.2.2"]
                              [org.clojure/tools.nrepl "0.2.13"]
                              [lein-doo "0.1.10"]
                              [reloaded.repl "0.2.4"]]
@@ -118,7 +118,7 @@
                         [lein-doo "0.1.10"]]
 
               :source-paths ["dev"]
-              :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}}
+              :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
 
              :uberjar
              {:source-paths ^:replace ["src/clj" "src/cljc"]
