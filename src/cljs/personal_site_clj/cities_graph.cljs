@@ -51,11 +51,11 @@
   [color-symbol]
   (case color-symbol
     :bg (q/color 0 0 13)
-    :bg-transparent (q/color 0 0 13 1)
-    :blue (q/color 200 87 80)
-    :light-gray (q/color 0 0 60)
+    :bg-transparent (q/color 0 0 13 0)
+    :blue (q/color 180 87 80)
+    :light-gray (q/color 180 5 60)
     :orange (q/color 29 100 100)
-    :wispy-gray (q/color 180 0 67 50)))
+    :wispy-gray (q/color 180 5 67 50)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
