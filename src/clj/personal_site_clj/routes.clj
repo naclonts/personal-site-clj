@@ -15,7 +15,7 @@
 		(POST "/contact-form" req
 			(try
 				(let [params ((multipart-params-request req) :params)]
-					(mail/contact-submission
+ 					(mail/contact-submission
 						(params "name") (params "email") (params "message"))
 					(str "Message sent successfully!"))
 				(catch Exception e
@@ -25,3 +25,4 @@
 		; @TODO: add 404 page.
 		(ANY "/*" [path]
 			(redirect "/"))))
+

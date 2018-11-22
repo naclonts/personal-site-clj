@@ -251,7 +251,7 @@
       (q/fill curtain)
       (q/rect 0 0 (q/width) (q/height)))))
 
-(def CANVAS-WIDTH (- (.-innerWidth js/window) 25))
+(def CANVAS-WIDTH (- (.-innerWidth js/window) 40))
 
 (defn start [data]
   (log "startings...")

@@ -9,7 +9,7 @@
 ;	;	;	;	;	;	;	;	;	;	;	;	;
                                         ;
 (def CANVAS-WIDTHS
-  (min (- (.-innerWidth js/window) 25)
+  (min (- (.-innerWidth js/window) 40)
        500))
 
 (defn mostly-inside-window? [element-id]

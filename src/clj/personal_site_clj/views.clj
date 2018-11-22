@@ -31,7 +31,8 @@
 
 (defn content []
   [:div.section
-   [:canvas#cities-graph-canvas {:width "100%"}]
+   [:div.canvas-wrapper
+    [:canvas#cities-graph-canvas {:width "100%"}]]
    ;; Intro stuff
    [:div.above-fold
     [:div {:class "eight columns offset-by-two"}
@@ -41,7 +42,8 @@
 
 (defn avl-section []
   [:div.section
-   [:canvas {:width "100%" :id "avl-canvas"}]])
+   [:div.canvas-wrapper
+    [:canvas {:width "100%" :id "avl-canvas"}]]])
 
 (defn contact-form []
   (let [gen-field (fn [name id type el-type]
@@ -66,8 +68,7 @@
 
 (defn home-page []
 	(page/html5
-   [:div {:id "app" :style "min-height: 2000px;"}
-  	(println "home page view called!")
+   [:div#app.body-wrapper {:style "min-height: 2000px;"}
 		(page-head "Nathan Clonts")
 		(menu)
     (menu-button)

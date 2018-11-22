@@ -1,3 +1,7 @@
+* {
+	box-sizing: border-box;
+}
+
 html {
 	font-size: 16px;
 	font-weight: 300;
@@ -9,6 +13,27 @@ h1, h2, h3, h4, h5, h6 {
 body {
   background: #222;
   color: rgb(255, 146, 44);
+	margin: 0;
+	max-width: 100%;
+}
+
+.body-wrapper {
+	max-width: 100%;
+	overflow: auto;
+}
+.body-wrapper > * {
+	max-width: calc(100vw - 80px);
+	padding-left: 20px;
+	padding-right: 20px;
+	overflow: auto;
+}
+@media (min-width: 400px) {
+	.body-wrapper {
+		max-width: auto;
+	}
+	.body-wrapper > * {
+		padding: auto;
+	}
 }
 
 .section {
@@ -30,13 +55,15 @@ body {
 	width: 100%;
 	height: 100%;
 }
+.canvas-wrapper {
+	overflow-x: hidden;
+}
 canvas {
 	z-index: -100;
-	overflow: hidden;
 }
 
 #cities-graph-canvas {
-	width: 100%;
+	width: calc(100% - 40px);
 	position: absolute;
 }
 
