@@ -1,8 +1,10 @@
 (ns personal-site-clj.views
   (:require [clojure.string :as str]
+            [compojure.core :refer [GET]]
             [hiccup.page :as page]
 						[ring.util.anti-forgery :as util]
 						[markdown.core :refer [md-to-html-string]]
+            [clojure.java.io :as io]
             [clojure.string :refer [capitalize]]))
 
 (defn page-head [title]
@@ -28,6 +30,22 @@
             :id "hamburger"}
    [:span {:class "hamburger-box"}
     [:span {:class "hamburger-inner"}]]])
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Articles
+(defn article
+  [article-name]
+  ;;md-to-html-string
+  (println "article! ")
+  (md-to-html-string
+   (slurp
+    (io/resource "public/articles/bfs-in-clojure.md"))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Home page stuff
 
 (defn content []
   [:div.section

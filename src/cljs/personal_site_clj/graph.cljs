@@ -90,29 +90,20 @@
 (defn bfs
   [start graph]
   (let [out (chan)]
-    (println (get-vertex "Jacksonville" graph))
     (loop [discovered #queue [start]
            discovered-map {(:key start) true}
            u start]
-  ;;    (println "discovered = ")
-;;      (println discovered)
       (if (nil? u)
-        (do
-          (println "donezo!")
-          (println discovered)
-          [graph out])
+        [graph out]
         (let [neighbor-keys
-              (filter #(not (contains? discovered-map %)) (:connections u))
+              (filter #(not (contains? discovered-map %))
+                      (:connections u))
               neighbors
-              (map #(assoc (get-vertex % graph) :parent (:key u)) neighbor-keys)
-              new-discovered (as-> discovered ds
-                               (into #queue [] (concat ds neighbors)))]
-          ;; (println "-- bfs")
-          ;; (println "u:")
-          ;; (println u)
-          ;; (when (= (:key u) "Jacksonville") (js* "debugger;"))
-          ;; ;;(println "neighbors:")
-          ;; ;;(println neighbors)
+              (map #(assoc (get-vertex % graph) :parent (:key u))
+                   neighbor-keys)
+              new-discovered
+              (as-> discovered ds
+                (into #queue [] (concat ds neighbors)))]
           (go (>! out u))
           (recur
            ;; Record the neighbors as "discovered" and pop the first

@@ -10,19 +10,25 @@
 
 (defn home-routes [endpoint]
   (routes
-		(GET "/" req
-			(views/home-page))
-		(POST "/contact-form" req
-			(try
-				(let [params ((multipart-params-request req) :params)]
- 					(mail/contact-submission
-						(params "name") (params "email") (params "message"))
-					(str "Message sent successfully!"))
-				(catch Exception e
-					(println e)
-					(str "An error occurred while trying to send your message. Feel free to retry later, or email me at nathanclonts@gmail.com."))))
-		(resources "/")
-		; @TODO: add 404 page.
-		(ANY "/*" [path]
-			(redirect "/"))))
+	 (GET
+    "/" req
+		(views/home-page))
+   (GET
+    "/article/bfs-in-clojure" req
+    (views/article "bfs-in-clojure"))
+	 (POST
+    "/contact-form" req
+		(try
+			(let [params ((multipart-params-request req) :params)]
+ 				(mail/contact-submission
+				 (params "name") (params "email") (params "message"))
+				(str "Message sent successfully!"))
+			(catch Exception e
+				(println e)
+				(str "An error occurred while trying to send your message. Feel free to retry later, or email me at nathanclonts@gmail.com."))))
+	 (resources "/")
+; @TODO: add 404 page.
+	 (ANY
+    "/*" [path]
+		(redirect "/"))))
 
