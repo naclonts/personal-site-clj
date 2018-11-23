@@ -16,7 +16,9 @@
    (page/include-css "/css/normalize.css")
    (page/include-css "/css/skeleton.css")
    (page/include-css "/css/hamburgers.css")
-   (page/include-css "/css/style.css")])
+   (page/include-css "/css/style.css")
+   (page/include-css
+    "/lib/highlight/styles/tomorrow-night-bright.css")])
 
 (defn menu []
   ;; Menu!
@@ -37,11 +39,23 @@
 ;; Articles
 (defn article
   [article-name]
-  ;;md-to-html-string
-  (println "article! ")
-  (md-to-html-string
-   (slurp
-    (io/resource "public/articles/bfs-in-clojure.md"))))
+  (page/html5
+   (page-head article-name)
+   [:div.body-wrapper
+    (menu)
+    (menu-button)
+    [:div "hi"]
+    (md-to-html-string
+     (slurp
+      (io/resource (str "public/articles/" article-name ".md")))
+     :heading-anchors true)]
+   [:script {:src "/js/compiled/personal_site_clj.js"
+             :type "text/javascript"}]
+   [:script {:type "text/javascript"}
+    "personal_site_clj.system.go();"]
+   [:script {:src "/lib/highlight/highlight.pack.js"}]
+   [:script {:type "text/javascript"}
+    "hljs.initHighlightingOnLoad();"]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -86,14 +100,14 @@
 
 (defn home-page []
 	(page/html5
+	 (page-head "Nathan Clonts")
    [:div#app.body-wrapper {:style "min-height: 2000px;"}
-		(page-head "Nathan Clonts")
 		(menu)
     (menu-button)
     (content)
     (avl-section)
     (contact-form)]
-   [:script {:src "js/compiled/personal_site_clj.js"
+   [:script {:src "/js/compiled/personal_site_clj.js"
              :type "text/javascript"}]
    [:script {:type "text/javascript"}
     "personal_site_clj.system.go();"]))

@@ -3,21 +3,25 @@
 
 Below is an implementation of a graph structure and breadth-first search (BFS) algorithm that allows each vertex or node to contain any payload you like -- a map, a string, whatever.
 
-
 1. [Why a graph algorithm?](#why-a-dang-graph-algorithm)
 2. [The Graph and the Vertex](#the-graph-and-the-vertex)
 3. [Fundamental Operations](#fundamental-operations)
 4. [The Search they call Breadth First](#the-search-they-call-breadth-first)
 
 ## Why a dang graph algorithm?
-After starting a new job working with Python and JavaScript, I felt the itch to learn something in the functional tradition. Eventually I settled on Clojure, a dialect of the venerable Lisp. Working with algorithms and data structures is one of the best ways to learn a new language, so I translated a breadth-first search algorithm into Clojure, and in the process found some interesting differences between the Lispey code and the classic imperative style. 
+Graph traversal algorithms like Breadth-First Search and its close cousin, Depth-First Search, open up fast solutions to some interesting problems including:
 
-There are other implementations of BFS for Clojure on the web, but some of them use graph representations that don't have the ability to assign arbitrary payloads to vertices. Sometimes a simple integer for each vertex will suffice, but giving yourself the option to tie any data to a graph opens up a ton of interesting applications.
+* [Graph coloring](https://en.wikipedia.org/wiki/Graph_coloring), used in drawing maps, creating compilers, and playing Sudoku
+* Finding **articulation vertices**, which are likely points of failure in graphs such as telephone networks, internet networks, and more
+* Making your way out of a maze by the shortest path possible
 
-Much credit is due to the free book [Problem Solving with Algorithms and Data Structures using Python](http://interactivepython.org/runestone/static/pythonds/index.html), which provided the inspiration and basis for this implementation. I recommend it to anyone who'd like to beef up their algorithmic chops.
+After starting a new job working with Python and JavaScript, I felt the itch to learn something in the functional tradition. Eventually I settled on Clojure, a dialect of the venerable Lisp. Working with algorithms and data structures is one of the best ways to learn a new language, so I translated a breadth-first search algorithm into Clojure, and in the process found some interesting differences between the Lispey code and the classic imperative style.
+
+Much credit is due to the free book [Problem Solving with Algorithms and Data Structures using Python](http://interactivepython.org/runestone/static/pythonds/index.html), which provided the basis for the graph data structure implementation, and [*The Algorithm Design Manual*](http://www.algorist.com) by Steven Skiena, which inspired the BFS algorithm used here. I recommend both to anyone who'd like to beef up their algorithmic chops.
 
 ## The Graph and the Vertex
-First off, let's define our data structures. Our vertices are simple key value objects, and the graph is a collection of vertices.
+First off, let's define our data structures. Our vertices each have a key, a value, and a list of connected vertices, and the graph is a collection of vertices.
+
 [[ insert basic graph drawing ]]
 ```clojure
 (defrecord Graph [vertices])
@@ -140,13 +144,38 @@ Here we'll use the handy threading macro `as->` to progressively transform our G
 ```
 
 ### The Search they call Breadth First
-Our breadth first search function will accept a graph object and a starting vertex. It will return the graph with each vertex's `:parent` property updated to the appropriate parent's key for a BFS path. Here's the function:
+Now for the actual Breadth-First Search algorithm! In pseudo-code, the algorithm can be described like this:
+
+* BFS(graph, start-node)
+	* Mark all vertices in `graph` as "undiscovered"
+	* Mark `start-node` as "discovered"
+	* Create a FIFO (first-in first-out) queue `Q` initially containing `start-node`
+	* While `Q` is not empty:
+		* Pop the first element from `Q`, assign to `u`
+		* Process vertex `u` as needed (need some side effects?)
+		* For each vertex `v` adjacent to `u`:
+			* Process edge `(u, v)` as needed
+			* If `v` is "undiscovered":
+				* Mark `v` as "discovered"
+				* Set `v`'s parent to `u`
+				* Add `v` to `Q`
+			* Mark `u` as "completely explored"
+
+> This pseudo-code is paraphrased from *The Algorithm Design Manual* by Steven Skiena, a superb resource for any algorist!
+
+This is in a somewhat imperative style, so we'll make some adjustments to utilize the *Power of the Lambda*.
+
+Our breadth first search function will accept a graph object and a starting vertex. It will return the graph with each vertex's `:parent` property updated to the appropriate parent's key for a BFS path.
 
 ```clojure
+;; For ClojureScript programs, replace both instances of
+;; `clojure.lang.PersistentQueue/EMPTY` below with `#queue []`
+(use '[clojure.string :only (join)])
+
 (defn bfs
 	"Return `graph` with each vertex's `:parent` property updated."
 	[graph start]
-	(loop [discovered (create-queue start)
+	(loop [discovered clojure.lang.PersistentQueue/EMPTY
 			   discovered-map {(:key start) true}
 			   u start
          new-graph graph]
@@ -159,13 +188,17 @@ Our breadth first search function will accept a graph object and a starting vert
 				    (filter #(not (contains? discovered-map %))
 					          (:connections u))
 				    neighbors
-				    (map #(assoc (get-vertex graph %) :parent (:key u))
+				    (map #(assoc
+                   (get-vertex graph %) :parent (:key u))
 					       neighbor-keys)
 				    new-discovered
 				    (as-> discovered ds
 					    ;; NOTE: cljs vs. clj
 					    (into clojure.lang.PersistentQueue/EMPTY
                     (concat ds neighbors)))]
+        ;; Further processing of `u` or the `(u, v)` edges can go here
+        (println (str "Exploring vertex " (:key u) ", neighbors: "
+                      (join ", " neighbor-keys)))        
         ;; Proceed to exploring the next vertice, adding `u`'s
         ;; neighbors to the discovered pile
         (recur
@@ -186,6 +219,8 @@ Our breadth first search function will accept a graph object and a starting vert
 
 ___
 
-I hope you've enjoyed reading this article half as much as I've enjoyed playing with these graphs.
+I hope you've enjoyed reading this article half as much as I've enjoyed playing with these graphs!
 
 Good luck, and happy hacking.
+
+	
