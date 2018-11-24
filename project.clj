@@ -55,7 +55,7 @@
                 :figwheel {:on-jsload "personal-site-clj.system/reset"}
 
                 :compiler {:main cljs.user
-                           :asset-path "js/compiled/out"
+                           :asset-path "/js/compiled/out"
                            :output-to "dev-target/public/js/compiled/personal_site_clj.js"
                            :output-dir "dev-target/public/js/compiled/out"
                            :source-map-timestamp true}}

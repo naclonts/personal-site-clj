@@ -7,18 +7,21 @@
             [clojure.java.io :as io]
             [clojure.string :refer [capitalize]]))
 
-(defn page-head [title]
-	[:head
-	 [:title title]
-   [:meta {:charset "UTF-8"}]
-   [:meta {:name "viewport"
-           :content "width=device-width, initial-scale=1"}]
-   (page/include-css "/css/normalize.css")
-   (page/include-css "/css/skeleton.css")
-   (page/include-css "/css/hamburgers.css")
-   (page/include-css "/css/style.css")
-   (page/include-css
-    "/lib/highlight/styles/tomorrow-night-bright.css")])
+(defn page-head
+  ([title] (page-head title nil))
+  ([title extra-css]
+	 [:head
+	  [:title title]
+    [:meta {:charset "UTF-8"}]
+    [:meta {:name "viewport"
+            :content "width=device-width, initial-scale=1"}]
+    (page/include-css "/css/normalize.css")
+    (page/include-css "/css/skeleton.css")
+    (page/include-css "/css/hamburgers.css")
+    (page/include-css "/css/style.css")
+    (page/include-css
+     "/lib/highlight/styles/tomorrow-night-bright.css")
+    extra-css]))
 
 (defn menu []
   ;; Menu!
@@ -40,7 +43,11 @@
 (defn article
   [article-name]
   (page/html5
-   (page-head article-name)
+   ;; Header
+   (page-head
+    article-name
+    (page/include-css "/css/articles.css"))
+   ;; Body
    [:div.body-wrapper
     (menu)
     (menu-button)
