@@ -74,7 +74,8 @@ canvas {
     box-sizing: border-box;
     position: fixed;
     height: 100%;
-    width: 100%;
+    width: 80%;
+		margin: 0 10%;
     background-color: hsla(0, 0%, 27%, 0.8);
     z-index: 10;
     padding: 10% 0;
@@ -98,12 +99,12 @@ canvas {
     background-color: hsl(0, 0%, 90%);
     color: #5b5b5b;
     overflow: hidden;
-    transition: transform .55s cubic-bezier(0,.35,0,1),
-                color .15s ease-out .1s;
+    transition: transform .65s cubic-bezier(0,.35,0,1),
+                ease-out .1s;
 }
 
 .menu a:hover {
-    color: #dfdfdf;
+  color: #dfdfdf;
 }
 
 .menu a:nth-child(1) { transition-delay: .36s; }

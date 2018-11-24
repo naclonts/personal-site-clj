@@ -26,8 +26,9 @@
 (defn menu []
   ;; Menu!
   [:nav {:id "menu" :class "menu hidden"}
-   [:a {:href "/" :class "menu-link"} [:span "work"]]
-   [:a {:href "/#projects" :class "menu-link"} [:span "projects"]]
+   [:a {:href "/" :class "menu-link"} [:span "about"]]
+   [:a {:href "/articles" :class "menu-link"} [:span "writing"]]
+   [:a {:href "/#projects" :class "menu-link"} [:span "work"]]
    [:a {:href "/#contact" :class "menu-link"} [:span "contact"]]])
 
 (defn menu-button []
@@ -51,11 +52,11 @@
    [:div.body-wrapper
     (menu)
     (menu-button)
-    [:div "hi"]
-    (md-to-html-string
-     (slurp
-      (io/resource (str "public/articles/" article-name ".md")))
-     :heading-anchors true)]
+    [:div.max-reading-width
+     (md-to-html-string
+      (slurp
+       (io/resource (str "public/articles/" article-name ".md")))
+      :heading-anchors true)]]
    [:script {:src "/js/compiled/personal_site_clj.js"
              :type "text/javascript"}]
    [:script {:type "text/javascript"}

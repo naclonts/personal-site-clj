@@ -1,4 +1,5 @@
-(ns personal-site-clj.avl-tree)
+(ns personal-site-clj.avl-tree
+  (:require [clojure.string :refer [join]]))
 
 ; Binary (AVL) tree implementation
 ; thanks to https://two-wrongs.com/purely-functional-avl-trees-in-common-lisp.html
@@ -90,7 +91,7 @@
 						(concat (lookup key left) (lookup key right)))))
 
 (defn tree-tabs [n]
-  (clojure.string/join(repeat n "\t")))
+  (join (repeat n "\t")))
 
 (defn tree-visualize
   ([tree] (tree-visualize tree 0))

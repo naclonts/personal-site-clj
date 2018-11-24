@@ -1,8 +1,17 @@
 /* 
  * CSS for articles
  */
+html {
+	font-size: 12px;
+}
 
 body {
 	background: #efefef;
 	color: #222;
 }
+
+.max-reading-width {
+	max-width: 750px;
+	margin: auto;
+}
+

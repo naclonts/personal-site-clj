@@ -200,7 +200,8 @@
         (go (let [v (<! vertex-explorer)]
               (when (not (nil? v))
                 (swap! vertex-highlighted
-                       (fn [] (G/get-vertex (:parent v) graph)))
+                       (fn [] (G/get-vertex "Fort Collins" graph)))
+                       ;; (fn [] (G/get-vertex (:parent v) graph)))
                 (when (not (nil? (:parent v)))
                   (swap! highlighted-connections
                          conj {:from (:parent v)
