@@ -57,10 +57,10 @@
       (slurp
        (io/resource (str "public/articles/" article-name ".md")))
       :heading-anchors true)]]
-   [:script {:src "/js/compiled/personal_site_clj.js"
+   [:script {:src "/js/compiled/articles.js"
              :type "text/javascript"}]
-   [:script {:type "text/javascript"}
-    "personal_site_clj.system.go();"]
+   ;; [:script {:type "text/javascript"}
+   ;;  "personal_site_clj.system.go();"]
    [:script {:src "/lib/highlight/highlight.pack.js"}]
    [:script {:type "text/javascript"}
     "hljs.initHighlightingOnLoad();"]))
@@ -96,6 +96,7 @@
                               :required true}]])]
     [:div#contact.six.columns.offset-by-two
      [:h5 "Let’s Talk"]
+     [:p "Want to talk about a project? Shoot me a message in the form below."]
      [:form#contact-form {:action "/contact-form" :method "post"}
       (gen-field "name" "name" "text" :input)
       (gen-field "email" "email" "email" :input)
@@ -115,8 +116,9 @@
     (content)
     (avl-section)
     (contact-form)]
-   [:script {:src "/js/compiled/personal_site_clj.js"
+   [:script {:src "/js/compiled/home_page.js"
              :type "text/javascript"}]
    [:script {:type "text/javascript"}
-    "personal_site_clj.system.go();"]))
+    "personal_site_clj.system.go();"]
+   ))
 

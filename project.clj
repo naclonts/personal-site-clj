@@ -49,33 +49,43 @@
   :repl-options {:init-ns user}
 
   :cljsbuild {:builds
-              [{:id "app"
+              [
+               ;; {:id "app"
+               ;;  :source-paths ["src/cljs" "src/cljc" "dev"]
+
+               ;;  :figwheel {:on-jsload "personal-site-clj.system/reset"}
+
+               ;;  :compiler {:main cljs.user
+               ;;             :asset-path "/js/compiled/out"
+               ;;             :output-to "dev-target/public/js/compiled/personal_site_clj.js"
+               ;;             :output-dir "dev-target/public/js/compiled/out"
+               ;;             :source-map-timestamp true}}
+
+               {:id "home-page" ;; min
                 :source-paths ["src/cljs" "src/cljc" "dev"]
-
+                ;;:jar true
                 :figwheel {:on-jsload "personal-site-clj.system/reset"}
-
                 :compiler {:main cljs.user
-                           :asset-path "/js/compiled/out"
-                           :output-to "dev-target/public/js/compiled/personal_site_clj.js"
-                           :output-dir "dev-target/public/js/compiled/out"
-                           :source-map-timestamp true}}
-
-               {:id "test"
-                :source-paths ["src/cljs" "test/cljs" "src/cljc" "test/cljc"]
-                :compiler {:output-to "dev-target/public/js/compiled/testable.js"
-                           :main personal-site-clj.test-runner
-                           :optimizations :none}}
-
-               {:id "min"
-                :source-paths ["src/cljs" "src/cljc"]
-                :jar true
-                :compiler {:main personal-site-clj.system
-                           :output-to "resources/public/js/compiled/personal_site_clj.js"
-                           :output-dir "target"
+                           :output-to "resources/public/js/compiled/home_page.js"
+                           :output-dir "resources/public/js/compiled/out"
                            :source-map-timestamp true
-                           :optimizations :advanced
-                           :closure-defines {goog.DEBUG false}
-                           :pretty-print false}}]}
+                           :asset-path "/js/compiled/out"
+                           ;;:optimizations :advanced
+                           ;;:closure-defines {goog.DEBUG false}
+                           ;;:pretty-print false
+                           }}
+
+               ;; {:id "articles"
+               ;;  :source-paths ["src/cljs" "src/cljc"]
+               ;;  :jar true
+               ;;  :compiler {:main personal-site-clj.articles
+               ;;             :output-to "resources/public/js/compiled/articles.js"
+               ;;             :output-dir "target_articles"
+               ;;             :source-map-timestamp true
+               ;;             :optimizations :advanced
+               ;;             :closure-defines {goog.DEBUG false}
+               ;;             :pretty-print false}}
+               ]}
 
   ;; When running figwheel from nREPL, figwheel will read this configuration
   ;; stanza, but it will read it without passing through leiningen's profile
@@ -104,7 +114,7 @@
 
              :server-logfile "log/figwheel.log"}
 
-  :doo {:build "test"}
+  :doo {:build "home-page"}
 
   :profiles {:dev
              {:dependencies [[figwheel "0.5.15"]
@@ -123,7 +133,8 @@
              :uberjar
              {:source-paths ^:replace ["src/clj" "src/cljc"]
               :prep-tasks ["compile"
-                           ["cljsbuild" "once" "min"]]
+                           ["cljsbuild" "once" "home-page"]]
               :hooks []
               :omit-source true
               :aot :all}})
+
