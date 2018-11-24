@@ -1,5 +1,4 @@
-
-# Breadth First Search Algorithm in Clojure (Payloads Included!)
+# Breadth First Search Algorithm in Clojure
 
 Below is an implementation of a graph structure and breadth-first search (BFS) algorithm that allows each vertex or node to contain any payload you like -- a map, a string, whatever.
 
@@ -84,8 +83,8 @@ We'll implement each of these in a *purely functional* way, meaning the function
 
 A couple of things to note here:
 
- 1. Each function that "modifies" the graph (`add-vertex`, `add-edge-directed`, and `add-edge`) returns a *new Graph object*, rather than editing the existing object. In terms of writing pure functions, this is an example of "no side effects".
- 2. Our `add-edge` function returns an *undirected* edge, meaning that if `u` is connected to `v`, then `v` is also connected to `u`. Depending on your problem, you might want to instead use `add-edge-directed` to make a one-way connection.
+1. Each function that "modifies" the graph (`add-vertex`, `add-edge-directed`, and `add-edge`) returns a *new Graph object*, rather than editing the existing object. In terms of writing pure functions, this is an example of "no side effects".
+2. Our `add-edge` function returns an *undirected* edge, meaning that if `u` is connected to `v`, then `v` is also connected to `u`. Depending on your problem, you might want to instead use `add-edge-directed` to make a one-way connection.
 
 [[insert illustration of directed vs undirected here]]
 
@@ -146,22 +145,22 @@ Here we'll use the handy threading macro `as->` to progressively transform our G
 ### The Search they call Breadth First
 Now for the actual Breadth-First Search algorithm! In pseudo-code, the algorithm can be described like this:
 
-* BFS(graph, start-node)
-	* Mark all vertices in `graph` as "undiscovered"
-	* Mark `start-node` as "discovered"
-	* Create a FIFO (first-in first-out) queue `Q` initially containing `start-node`
-	* While `Q` is not empty:
-		* Pop the first element from `Q`, assign to `u`
-		* Process vertex `u` as needed (need some side effects?)
-		* For each vertex `v` adjacent to `u`:
-			* Process edge `(u, v)` as needed
-			* If `v` is "undiscovered":
-				* Mark `v` as "discovered"
-				* Set `v`'s parent to `u`
-				* Add `v` to `Q`
-			* Mark `u` as "completely explored"
-
-> This pseudo-code is paraphrased from *The Algorithm Design Manual* by Steven Skiena, a superb resource for any algorist!
+```text
+BFS(graph, start-node)
+  * Mark all vertices in `graph` as "undiscovered"
+  * Mark `start-node` as "discovered"
+  * Create a FIFO (first-in first-out) queue `Q` initially containing `start-node`
+  * While `Q` is not empty:
+    * Pop the first element from `Q`, assign to `u`
+    * Process vertex `u` as needed (need some side effects?)
+    * For each vertex `v` adjacent to `u`:
+      * Process edge `(u, v)` as needed
+      * If `v` is "undiscovered":
+        * Mark `v` as "discovered"
+        * Set `v`'s parent to `u`
+        * Add `v` to `Q`
+      * Mark `u` as "completely explored"
+```
 
 This is in a somewhat imperative style, so we'll make some adjustments to utilize the *Power of the Lambda*.
 
