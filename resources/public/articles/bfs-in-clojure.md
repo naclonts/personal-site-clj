@@ -2,10 +2,10 @@
 
 Below is an implementation of a graph structure and breadth-first search (BFS) algorithm that allows each vertex or node to contain any payload you like -- a map, a string, whatever.
 
-1. [Why a graph algorithm?](#why-a-dang-graph-algorithm)
-2. [The Graph and the Vertex](#the-graph-and-the-vertex)
-3. [Fundamental Operations](#fundamental-operations)
-4. [The Search they call Breadth First](#the-search-they-call-breadth-first)
+1. [Why a graph algorithm?](#why_a_dang_graph_algorithm?)
+2. [The Graph and the Vertex](#the_graph_and_the_vertex)
+3. [Fundamental Operations](#fundamental_operations)
+4. [The Search they call Breadth First](#the_search_they_call_breadth_first)
 
 ## Why a dang graph algorithm?
 Graph traversal algorithms like Breadth-First Search and its close cousin, Depth-First Search, open up fast solutions to some interesting problems including:
@@ -19,7 +19,7 @@ After starting a new job working with Python and JavaScript, I felt the itch to 
 Much credit is due to the free book [Problem Solving with Algorithms and Data Structures using Python](http://interactivepython.org/runestone/static/pythonds/index.html), which provided the basis for the graph data structure implementation, and [*The Algorithm Design Manual*](http://www.algorist.com) by Steven Skiena, which inspired the BFS algorithm used here. I recommend both to anyone who'd like to beef up their algorithmic chops.
 
 ## The Graph and the Vertex
-First off, let's define our data structures. Our vertices each have a key, a value, and a list of connected vertices, and the graph is a collection of vertices.
+First off, let's define our data structures. Each Vertex has a key, a value, and a list of connected vertices. Each Graph is just a collection of vertices.
 
 [[ insert basic graph drawing ]]
 ```clojure
@@ -52,9 +52,9 @@ We'll implement each of these in a *purely functional* way, meaning the function
 	"Add a new vertex with the given `key` and `value` to a `graph`."
 	[{:keys [vertices] :as graph} key value]
 	(->Graph (assoc
-		 vertices
-		 key
-		 (->Vertex key value #{} nil))))
+		        vertices
+		        key
+		        (->Vertex key value #{} nil))))
 
 (defn get-vertex
 	[{:keys [vertices] :as graph} key]
@@ -69,11 +69,11 @@ We'll implement each of these in a *purely functional* way, meaning the function
 	"Creates an undirected edge between vertices `u` and `v`."
 	[{:keys [vertices] :as graph} u v]
 	(->Graph
-	 ;; Notice the thread "->" operation here, which inserts `vertices` as the
-	 ;; first argument of the two `assoc` calls
+	 ;; Notice the thread "->" operation here, which inserts `vertices`
+   ;; as the first argument of the two `assoc` calls
 	 (-> vertices
-		 (assoc (:key u) (add-edge-directed u v))
-		 (assoc (:key v) (add-edge-directed v u)))))
+		   (assoc (:key u) (add-edge-directed u v))
+		   (assoc (:key v) (add-edge-directed v u)))))
 
 (defn connected?
 	"Returns `true` if `u` has an edge to `v`; otherwise, returns `false`."
@@ -142,7 +142,7 @@ Here we'll use the handy threading macro `as->` to progressively transform our G
 ;; Are Answer and Question connected?  true
 ```
 
-### The Search they call Breadth First
+## The Search they call Breadth First
 Now for the actual Breadth-First Search algorithm! In pseudo-code, the algorithm can be described like this:
 
 ```text
@@ -152,7 +152,7 @@ BFS(graph, start-node)
   * Create a FIFO (first-in first-out) queue `Q` initially containing `start-node`
   * While `Q` is not empty:
     * Pop the first element from `Q`, assign to `u`
-    * Process vertex `u` as needed (need some side effects?)
+    * Process vertex `u` as needed
     * For each vertex `v` adjacent to `u`:
       * Process edge `(u, v)` as needed
       * If `v` is "undiscovered":
@@ -179,9 +179,9 @@ Our breadth first search function will accept a graph object and a starting vert
 			   u start
          new-graph graph]
 		(if (nil? u)
-      ;; Base case: all vertices have been discovered
+      ;; Base case: all vertices have been explored
 			new-graph
-      ;; Get all of the current node's neighbors that haven't been
+      ;; Queue any of the current node's neighbors that haven't been
       ;; discovered
 			(let [neighbor-keys
 				    (filter #(not (contains? discovered-map %))
@@ -192,7 +192,6 @@ Our breadth first search function will accept a graph object and a starting vert
 					       neighbor-keys)
 				    new-discovered
 				    (as-> discovered ds
-					    ;; NOTE: cljs vs. clj
 					    (into clojure.lang.PersistentQueue/EMPTY
                     (concat ds neighbors)))]
         ;; Further processing of `u` or the `(u, v)` edges can go here
@@ -211,14 +210,79 @@ Our breadth first search function will accept a graph object and a starting vert
                  neighbor-keys))))))
 ```
 
-
+> The `discovered-map` property here is just used to see which vertices have already been discovered, more efficiently than iterating over the `discovered` queue.
 
 [[ more detailed breakdown ]]
 
 
+## Appendix: Creating a Vertex Explorer with `async.core`
+	Notice the `println` in the above code? You can replace that with any processing you need to do on the graph, such as recording results in another data structure or emitting your next Sudoku move.
+
+	But what if your program has multiple uses for the BFS, or you don't want to embed application logic inside of the graph algorithm? In this case, we can harness Clojure's `async.core` system to create a **channel** that emits each vertex as it gets explored.
+
+	This only requires a miniscule change to our function:
+
+```clojure
+;; Note: for ClojureScript programs, replace both instances of
+;; `clojure.lang.PersistentQueue/EMPTY` below with `#queue []`
+(use '[clojure.string :only (join)]
+     '[cljs.core.async
+       :as async
+       :refer [>! <! go chan take]])
+
+(defn bfs-channel
+  "Return a 2-tuple where the first element is `graph`, with each
+  vertex's `:parent` property updated, and the second element is an
+  async.core channel that emits each vertex as it is explored."
+	[graph start]
+  (let [out (chan)]
+	  (loop [discovered clojure.lang.PersistentQueue/EMPTY
+			     discovered-map {(:key start) true}
+			     u start
+           new-graph graph]
+		  (if (nil? u)
+        ;; Base case: all vertices have been discovered
+			  [new-graph
+         (take (count (:vertices new-graph)) out)]
+        ;; Get all of the current node's neighbors that haven't been
+        ;; discovered
+			  (let [neighbor-keys
+				      (filter #(not (contains? discovered-map %))
+					            (:connections u))
+				      neighbors
+				      (map #(assoc
+                     (get-vertex graph %) :parent (:key u))
+					         neighbor-keys)
+				      new-discovered
+				      (as-> discovered ds
+					      (into clojure.lang.PersistentQueue/EMPTY
+                      (concat ds neighbors)))]
+          ;; Emit the vertex being explored to `out`
+          (go (>! out u))
+          ;; Proceed to exploring the next vertice, adding `u`'s
+          ;; neighbors to the discovered pile
+          (recur
+				   (pop new-discovered)
+				   (into discovered-map
+						     (map #(hash-map % true) neighbor-keys))
+				   (peek new-discovered)
+           ;; Update each of `u`'s neighbors to show `u` is the parent
+           (reduce #(assoc-in %1 [:vertices %2 :parent] (:key u))
+                   new-graph
+                   neighbor-keys)))))))
+```
+
+	Now we can read from the `out` channel, and do all processing outside of the `bfs` function:
+```clojure
+	example
+```
+
+	*Freakin' sweet!*
 ___
 
 I hope you've enjoyed reading this article half as much as I've enjoyed playing with these graphs!
+
+If you find any bugs, mastermind any improvements, or want to work with me on a project, [feel free to shoot me a message](https://nathanclonts.com/#contact)!
 
 Good luck, and happy hacking.
 

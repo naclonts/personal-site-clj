@@ -1,7 +1,7 @@
 (ns personal-site-clj.graph
   (:require [cljs.core.async
              :as async
-             :refer [>! <! go chan close!]]))
+             :refer [>! <! go chan take])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Graph structure implementation
@@ -61,31 +61,6 @@
     (doseq [v (map val vertices)]
       (go (>! out v)))
     (async/take (count vertices) out)))
-
-;; (defn bfs2
-;;   "Returns a channel that emits vertices in the order they are
-;;   discovered in a Breadth First Search."
-;;   [start graph]
-;;   (let [out (chan)]
-;;     (loop [vertices {}
-;;            explored #{start}
-;;            frontier #queue [start]]
-;;       (if (empty? frontier)
-;;         ;; Once we're done, return the updated graph and channel
-;;         [(assoc graph :vertices vertices)
-;;          out]
-;;         ;; Continue
-;;         (let [v (peek frontier)
-;;               neighbors (map
-;;                          (fn [key]
-;;                            (assoc (get-vertex key graph)
-;;                                   :parent (:key v)))
-;;                          (:connections v))]
-;;           (go (>! out v))
-;;           (recur
-;;            (assoc vertices (:key v) v)
-;;            (into explored neighbors)
-;;            (into (pop frontier) (remove explored neighbors))))))))
 
 (defn bfs
   [start graph]

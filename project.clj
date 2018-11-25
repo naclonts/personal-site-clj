@@ -75,16 +75,19 @@
                            ;;:pretty-print false
                            }}
 
-               ;; {:id "articles"
-               ;;  :source-paths ["src/cljs" "src/cljc"]
-               ;;  :jar true
-               ;;  :compiler {:main personal-site-clj.articles
-               ;;             :output-to "resources/public/js/compiled/articles.js"
-               ;;             :output-dir "target_articles"
-               ;;             :source-map-timestamp true
-               ;;             :optimizations :advanced
-               ;;             :closure-defines {goog.DEBUG false}
-               ;;             :pretty-print false}}
+               {:id "articles"
+                :source-paths ["src/cljs" "src/cljc" "dev"]
+                ;;:jar true
+                :figwheel {:on-jsload "personal-site-clj.system/reset"}
+                :compiler {:main cljs.user
+                           :output-to "resources/public/js/compiled/articles.js"
+                           :output-dir "resources/public/js/compiled/out/articles"
+                           :source-map-timestamp true
+                           :asset-path "/js/compiled/out"
+                           ;;:optimizations :advanced
+                           ;;:closure-defines {goog.DEBUG false}
+                           ;;:pretty-print false
+                           }}
                ]}
 
   ;; When running figwheel from nREPL, figwheel will read this configuration
@@ -133,7 +136,8 @@
              :uberjar
              {:source-paths ^:replace ["src/clj" "src/cljc"]
               :prep-tasks ["compile"
-                           ["cljsbuild" "once" "home-page"]]
+                           ["cljsbuild" "once" "home-page"]
+                           ["cljsbuild" "once" "articles"]]
               :hooks []
               :omit-source true
               :aot :all}})
