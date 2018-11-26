@@ -1,11 +1,15 @@
 # Breadth First Search Algorithm in Clojure
-
+>"All that is gold does not glitter,  
+>Not all those who wander are lost…"  
+>		— *J. R. R. Tolkien*
+	
 Below is an implementation of a graph structure and breadth-first search (BFS) algorithm that allows each vertex or node to contain any payload you like -- a map, a string, whatever.
 
 1. [Why a graph algorithm?](#why_a_dang_graph_algorithm?)
 2. [The Graph and the Vertex](#the_graph_and_the_vertex)
 3. [Fundamental Operations](#fundamental_operations)
 4. [The Search they call Breadth First](#the_search_they_call_breadth_first)
+5. [Appendix: Creating a Vertex Explorer with `async.core`](#appendix:_creating_a_vertex_explorer_with_<code>async.core</code>)
 
 ## Why a dang graph algorithm?
 Graph traversal algorithms like Breadth-First Search and its close cousin, Depth-First Search, open up fast solutions to some interesting problems including:
@@ -280,9 +284,9 @@ Our breadth first search function will accept a graph object and a starting vert
 	*Freakin' sweet!*
 ___
 
-I hope you've enjoyed reading this article half as much as I've enjoyed playing with these graphs!
+I hope you've enjoyed reading this article half as much as I've enjoyed playing with these graphs.
 
-If you find any bugs, mastermind any improvements, or want to work with me on a project, [feel free to shoot me a message](https://nathanclonts.com/#contact)!
+If you think of ways to improve this (I'm sure there are some!), or want to work with me on a project, [feel free to shoot me a message](https://nathanclonts.com/#contact)!
 
 Good luck, and happy hacking.
 
