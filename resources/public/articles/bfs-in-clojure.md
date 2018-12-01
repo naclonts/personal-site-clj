@@ -20,7 +20,7 @@ Graph traversal algorithms like Breadth-First Search and its close cousin, Depth
 
 After starting a new job working with Python and JavaScript, I felt the itch to learn something in the functional tradition. Eventually I settled on Clojure, a dialect of the venerable Lisp. Working with algorithms and data structures is one of the best ways to learn a new language, so I translated a breadth-first search algorithm into Clojure, and in the process found some interesting differences between the Lispey code and the classic imperative style.
 
-Much credit is due to the free book [Problem Solving with Algorithms and Data Structures using Python](http://interactivepython.org/runestone/static/pythonds/index.html), which provided the basis for the graph data structure implementation, and [*The Algorithm Design Manual*](http://www.algorist.com) by Steven Skiena, which inspired the BFS algorithm used here. I recommend both to anyone who'd like to beef up their algorithmic chops.
+Much credit is due to the free book [*Problem Solving with Algorithms and Data Structures using Python*](http://interactivepython.org/runestone/static/pythonds/index.html), which provided the basis for the graph data structure implementation, and [*The Algorithm Design Manual*](http://www.algorist.com) by Steven Skiena, which inspired the BFS algorithm used here. I recommend both to anyone who'd like to beef up their algorithmic chops.
 
 ## The Graph and the Vertex
 First off, let's define our data structures. Each Vertex has a key, a value, and a list of connected vertices. Each Graph is just a collection of vertices.
@@ -151,19 +151,19 @@ Now for the actual Breadth-First Search algorithm! In pseudo-code, the algorithm
 
 ```text
 BFS(graph, start-node)
-  * Mark all vertices in `graph` as "undiscovered"
-  * Mark `start-node` as "discovered"
-  * Create a FIFO (first-in first-out) queue `Q` initially containing `start-node`
-  * While `Q` is not empty:
-    * Pop the first element from `Q`, assign to `u`
-    * Process vertex `u` as needed
-    * For each vertex `v` adjacent to `u`:
-      * Process edge `(u, v)` as needed
-      * If `v` is "undiscovered":
-        * Mark `v` as "discovered"
-        * Set `v`'s parent to `u`
-        * Add `v` to `Q`
-      * Mark `u` as "completely explored"
+		Mark all vertices in `graph` as "undiscovered"
+		Mark `start-node` as "discovered"
+		Create a FIFO (first-in first-out) queue `Q` initially containing `start-node`
+		While `Q` is not empty:
+				Pop the first element from `Q`, assign to `u`
+	  	  Process vertex `u` as needed
+		    For each vertex `v` adjacent to `u`:
+						Process edge `(u, v)` as needed
+						If `v` is "undiscovered":
+								Mark `v` as "discovered"
+								Set `v`'s parent to `u`
+								Add `v` to `Q`
+				Mark `u` as "completely explored"
 ```
 
 This is in a somewhat imperative style, so we'll make some adjustments to utilize the *Power of the Lambda*.

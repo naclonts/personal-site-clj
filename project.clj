@@ -49,18 +49,19 @@
   :repl-options {:init-ns user}
 
   :cljsbuild {:builds
-              [
-               ;; {:id "app"
-               ;;  :source-paths ["src/cljs" "src/cljc" "dev"]
+              ;; [
+              ;;  ;; {:id "app"
+              ;;  ;;  :source-paths ["src/cljs" "src/cljc" "dev"]
 
-               ;;  :figwheel {:on-jsload "personal-site-clj.system/reset"}
+              ;;  ;;  :figwheel {:on-jsload "personal-site-clj.system/reset"}
 
-               ;;  :compiler {:main cljs.user
-               ;;             :asset-path "/js/compiled/out"
-               ;;             :output-to "dev-target/public/js/compiled/personal_site_clj.js"
-               ;;             :output-dir "dev-target/public/js/compiled/out"
-               ;;             :source-map-timestamp true}}
-
+              ;;  ;;  :compiler {:main cljs.user
+              ;;  ;;             :asset-path "/js/compiled/out"
+              ;;  ;;             :output-to "dev-target/public/js/compiled/personal_site_clj.js"
+              ;;  ;;             :output-dir "dev-target/public/js/compiled/out"
+              ;;  ;;             :source-map-timestamp true}}
+              ;;  ]
+              {:home-page
                {:id "home-page" ;; min
                 :source-paths ["src/cljs" "src/cljc" "dev"]
                 ;;:jar true
@@ -74,7 +75,7 @@
                            ;;:closure-defines {goog.DEBUG false}
                            ;;:pretty-print false
                            }}
-
+               :articles
                {:id "articles"
                 :source-paths ["src/cljs" "src/cljc" "dev"]
                 ;;:jar true
@@ -87,8 +88,8 @@
                            ;;:optimizations :advanced
                            ;;:closure-defines {goog.DEBUG false}
                            ;;:pretty-print false
-                           }}
-               ]}
+                           }}}
+               }
 
   ;; When running figwheel from nREPL, figwheel will read this configuration
   ;; stanza, but it will read it without passing through leiningen's profile
@@ -117,7 +118,7 @@
 
              :server-logfile "log/figwheel.log"}
 
-  :doo {:build "home-page"}
+  :doo {:build "articles"}
 
   :profiles {:dev
              {:dependencies [[figwheel "0.5.15"]

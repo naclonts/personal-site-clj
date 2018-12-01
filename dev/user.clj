@@ -40,3 +40,4 @@
 (defn browser-repl []
   (println "(browser-repl) is deprecated, use (cljs-repl)")
   (cljs-repl))
+

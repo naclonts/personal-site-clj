@@ -1,7 +1,7 @@
 (ns personal-site-clj.graph
   (:require [cljs.core.async
              :as async
-             :refer [>! <! go chan take])))
+             :refer [>! <! go chan take]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Graph structure implementation
