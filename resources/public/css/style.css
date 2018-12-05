@@ -37,6 +37,7 @@ body {
 }
 
 .section {
+	display: flex;
 	width: 100%;
 }
 .above-fold {
@@ -44,8 +45,9 @@ body {
 	flex-direction: column;
 	justify-content: center;
 
+	width: 100%;
 	max-width: 800px;
-	min-height: 85vh;
+	min-height: 750px;
 	margin: auto;
 
 	text-align: center;

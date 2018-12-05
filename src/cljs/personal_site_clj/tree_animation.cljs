@@ -22,7 +22,7 @@
 			(> (.-bottom el-rect) (/ window-height 2)))))
 
 (def FRAME-RATE 30)
-(def UPDATE-TREE-PERIOD (* 2 FRAME-RATE))
+(def UPDATE-TREE-PERIOD (* 1 FRAME-RATE))
 (def PROGRESS-INCREMENT (/ 0.5 FRAME-RATE))
 (def tree-settings
 	{:x-spread (/ CANVAS-WIDTHS 3)

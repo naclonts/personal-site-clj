@@ -83,7 +83,11 @@
 (defn avl-section []
   [:div.section
    [:div.canvas-wrapper
-    [:canvas {:width "100%" :id "avl-canvas"}]]])
+    [:canvas {:width "100%" :id "avl-canvas"}]]
+   [:div
+    [:a {:href "/article/bfs-in-clojure"}
+     [:h4
+      "Latest Article: Breadth First Search Algorithm in Clojure"]]]])
 
 (defn contact-form []
   (let [gen-field (fn [name id type el-type]
