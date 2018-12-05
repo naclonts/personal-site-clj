@@ -4,7 +4,6 @@
             [compojure.route :refer [resources]]
 						[ring.util.response :refer [response redirect]]
 						[ring.middleware.multipart-params :refer [multipart-params-request]]
-						[environ.core :refer [env]]
 						[personal-site-clj.mail :as mail]
 						[personal-site-clj.views :as views]))
 
