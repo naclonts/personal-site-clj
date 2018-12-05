@@ -6,7 +6,7 @@
             [hiccup.middleware :refer [wrap-base-url]]
             [environ.core :refer [env]]))
 
-(def base-url (or (env :base-url "/home-page")))
+(def base-url (env :base-url "/home-page"))
 
 (defn config []
 	{:http-port  (Integer. (or (env :port) 10555))
