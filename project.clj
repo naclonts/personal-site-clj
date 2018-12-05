@@ -25,7 +25,9 @@
 								 [hiccup "1.0.5"]
 								 [markdown-clj "1.0.5"]
 								 [com.draines/postal "2.0.2"]
-                 [binaryage/devtools "0.9.10"]]
+                 [binaryage/devtools "0.9.10"]
+                 [figwheel-sidecar "0.5.15"]
+                 [reloaded.repl "0.2.4"]]
 
 	:plugins [[lein-cljsbuild "1.1.7"]
 						[cider/cider-nrepl "0.18.0"]]
