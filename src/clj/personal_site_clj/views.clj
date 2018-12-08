@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [compojure.core :refer [GET]]
             [hiccup.page :as page]
+            [hiccup.element :as el]
 						[ring.util.anti-forgery :as util]
 						[markdown.core :refer [md-to-html-string]]
             [clojure.java.io :as io]
@@ -26,10 +27,10 @@
 (defn menu []
   ;; Menu!
   [:nav {:id "menu" :class "menu hidden"}
-   [:a {:href "/" :class "menu-link"} [:span "about"]]
-   [:a {:href "/articles" :class "menu-link"} [:span "writing"]]
-   [:a {:href "/#projects" :class "menu-link"} [:span "work"]]
-   [:a {:href "/#contact" :class "menu-link"} [:span "contact"]]])
+   (el/link-to {:class "menu-link"} "/" [:span "about"])
+   (el/link-to {:class "menu-link"} "/articles" [:span "writing"])
+   (el/link-to {:class "menu-link"} "/#projects" [:span "work"])
+   (el/link-to {:class "menu-link"} "/#contact" [:span "contact"])])
 
 (defn menu-button []
   [:button {:class "hamburger hamburger--vortex" :type "button"
@@ -57,11 +58,10 @@
       (slurp
        (io/resource (str "public/articles/" article-name ".md")))
       :heading-anchors true)]]
-   [:script {:src "/js/compiled/articles.js"
-             :type "text/javascript"}]
+   (page/include-js "/js/compiled/articles.js")
    ;; [:script {:type "text/javascript"}
    ;;  "personal_site_clj.system.go();"]
-   [:script {:src "/lib/highlight/highlight.pack.js"}]
+   (page/include-js "/lib/highlight/highlight.pack.js")
    [:script {:type "text/javascript"}
     "hljs.initHighlightingOnLoad();"]))
 
@@ -85,9 +85,10 @@
    [:div.canvas-wrapper
     [:canvas {:width "100%" :id "avl-canvas"}]]
    [:div
-    [:a {:href "/article/bfs-in-clojure"}
+    (el/link-to
+     "/article/bfs-in-clojure"
      [:h4
-      "Latest Article: Breadth First Search Algorithm in Clojure"]]]])
+      "Latest Article: Breadth First Search Algorithm in Clojure"])]])
 
 (defn contact-form []
   (let [gen-field (fn [name id type el-type]
@@ -120,9 +121,7 @@
     (content)
     (avl-section)
     (contact-form)]
-   [:script {:src "/js/compiled/home_page.js"
-             :type "text/javascript"}]
+   (page/include-js "/js/compiled/home_page.js")
    [:script {:type "text/javascript"}
-    "personal_site_clj.system.go();"]
-   ))
+    "personal_site_clj.system.go();"]))
 
