@@ -1,6 +1,8 @@
 # personal-site-clj
 
-Chestnut template info below. :)
+Website written in Clojure and ClojureScript. 
+
+(The rest of the documentation below is from Chestnut.)
 
 ## Development
 
